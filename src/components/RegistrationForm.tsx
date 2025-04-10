@@ -22,29 +22,29 @@ const RegisterForm = () => {
         />
         Google
       </button>
-      <button className="google-button">
+      <button className="Microsoft-button">
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-          alt="Google"
-          className="google-icon"
+          alt="Microsoft"
+          className="Microsoft-icon"
         />
-        Google
+        Microsoft
       </button>
-      <button className="google-button">
+      <button className="Apple-button">
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-          alt="Google"
-          className="google-icon"
+          alt="Apple"
+          className="Apple-icon"
         />
-        Google
+        Apple
       </button>
-      <button className="google-button">
+      <button className="Slack-button">
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-          alt="Google"
-          className="google-icon"
+          alt="Slack"
+          className="Slack-icon"
         />
-        Google
+        Slack
       </button>
     </div>
   );
