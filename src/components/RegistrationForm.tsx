@@ -1,53 +1,56 @@
+import React from "react";
 import "../Style/RegistrationForm.css";
 
-const RegisterForm = () => {
+const RegistrationForm: React.FC = () => {
   return (
-    <div className="register-container">
-      <h2>Зарегистрируйтесь, чтобы продолжить</h2>
-      <input
-        type="email"
-        placeholder="Введите ваш адрес электронной почты"
-        className="input"
-      />
-      <p className="terms">
-        Регистрируясь, я соглашаюсь с <a href="#">Условиями использования продуктов Cloud</a> и принимаю <a href="#">Политику конфиденциальности Atlassian</a>.
-      </p>
-      <button className="register-button">Зарегистрироваться</button>
-      <div className="divider">Или продолжить с помощью:</div>
-      <button className="google-button">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-          alt="Google"
-          className="google-icon"
-        />
-        Google
-      </button>
-      <button className="Microsoft-button">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-          alt="Microsoft"
-          className="Microsoft-icon"
-        />
-        Microsoft
-      </button>
-      <button className="Apple-button">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-          alt="Apple"
-          className="Apple-icon"
-        />
-        Apple
-      </button>
-      <button className="Slack-button">
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-          alt="Slack"
-          className="Slack-icon"
-        />
-        Slack
-      </button>
+    <div className="registration-container">
+      <div className="form-box">
+        <div className="logo-section">
+          <img src="/logo.png" alt="ItRun Logo" className="logo" />
+          <h2>ItRun</h2>
+        </div>
+        <h3 className="title">Log in to continue</h3>
+
+
+        <div className="password-container">
+          <input type="email" placeholder="Email" className="input" />
+          <input type="password" placeholder="Password" className="input" />
+
+          <div className="options-row">
+             <input type="checkbox" /> Remember me
+            <label className="remember">
+             <a href="#" className="forgot">Forgot password?</a>
+            </label>
+          </div>
+        </div>
+
+        <button className="submit-button">Log in</button>
+
+        <div className="divider">
+          <span>or continue with</span>
+        </div>
+
+        <div className="social-buttons">
+          <button className="google-btn">
+            <img src="/google.svg" alt="Google" />
+            Google
+          </button>
+          <button className="microsoft-btn">
+            <img src="/microsoft.svg" alt="Microsoft" />
+            Microsoft
+          </button>
+          <button className="apple-btn">
+            <img src="/apple.svg" alt="Apple" />
+            Apple
+          </button>
+        </div>
+
+        <div className="login-link">
+          Already have an account? <a href="/login">Log in</a>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default RegisterForm;
+export default RegistrationForm;

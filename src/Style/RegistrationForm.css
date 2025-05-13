@@ -1,87 +1,158 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .register-container {
-    max-width: 400px; /* Максимальная ширина контейнера */
-    width: 100%; /* Ширина 100% для всех элементов */
-    padding: 20px; /* Отступы внутри контейнера */
-    text-align: center;
-    font-family: Arial, sans-serif;
-    background-color: #fff;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  h2 {
-    color: #666; /* Серый цвет для заголовка */
-    font-size: 20px; /* Меньше размер шрифта для заголовка */
-    margin-bottom: 20px; /* Отступ снизу для заголовка */
-  }
-  
-  input, .register-button, .google-button {
-    width: 100%; 
-    padding: 12px;
-    margin: 12px 0; 
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; 
-    background-color: #fff;
-  }
-  
-  .input {
-    margin-top: 0; /* Убираем отступ сверху у первого инпута */
-  }
-  
-  .register-button {
-    background-color: #0052cc;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .register-button:hover {
-    background-color: #0065ff;
-  }
-  
-  .divider {
-    margin: 20px 0;
-    font-size: 14px;
-    color: #999;
-  }
-  
-  .google-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: white;
-    border: 1px solid #ccc;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .google-icon {
-    width: 20px;
-    height: 20px;
-  }
-  
+.registration-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+  padding: 16px;
+  box-sizing: border-box;
+}
 
-  
-  /* Для ссылок оставляем оригинальный цвет */
-  .register-container a {
-    color: #0052cc; /* Цвет ссылок */
-    text-decoration: none;
-  }
-  
-  /* Уменьшаем размер шрифта для текста под инпутом */
-  .terms {
-    font-size: 12px; /* Меньше размер шрифта для текста под инпутом */
-    color: #666;
-    margin-bottom: 16px;
-  }
-  
+.form-box {
+  width: 100%;
+  max-width: 420px;
+  background-color: #1b1b1b;
+  /* border: 1px solid #00ffff; */
+  border-radius: 16px;
+  padding: 32px 24px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); */
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1e1e1e;
+  color: white;
+  outline: none;
+  margin-bottom: 12px; 
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; 
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.options-row {
+  display: flex;
+  align-items: center;
+  width: 90%;
+  font-size: 12px;
+  margin-bottom: 16px;
+  gap: 10px;
+}
+
+.remember{
+  display: flex;
+  margin-left:  auto;
+}
+
+.password-container {
+  width: 85%;
+  position: relative;
+}
+
+.input::placeholder {
+  color: #aaa;
+}
+
+.submit-button {
+  width: 90%;
+  height: 48px;
+  background-color: #00ffff;
+  color: #000000;
+  font-weight: 600;
+  border: none;
+  border-radius: 18px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #00cccc;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0;
+  color: #999;
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.google-btn,
+.microsoft-btn,
+.apple-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: transparent;
+  background-color: #363636;
+  height: 48px;
+  border-radius: 18px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.google-btn img,
+.microsoft-btn img,
+.apple-btn img {
+  height: 20px;
+  width: 20px;
+}
+
+.login-link {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.login-link a {
+  color: #00ffff;
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
