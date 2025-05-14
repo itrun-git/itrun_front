@@ -1,0 +1,111 @@
+.registration-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: radial-gradient(ellipse at bottom, #0f172a, #020617);
+}
+
+.form-box {
+  background-color: #111827;
+  border: 1px solid #14b8a6;
+  border-radius: 16px;
+  padding: 32px;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 0 24px rgba(20, 184, 166, 0.2);
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  filter: invert(50%) sepia(100%) saturate(500%) hue-rotate(120deg);
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 24px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #1f2937;
+  color: white;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #14b8a6;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #0d9488;
+}
+
+.login-link {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.login-link a {
+  color: #14b8a6;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.step {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #9ca3af;
+  border-radius: 50%;
+  color: #9ca3af;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step.active {
+  border-color: #14b8a6;
+  background-color: #14b8a6;
+  color: white;
+}

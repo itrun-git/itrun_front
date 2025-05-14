@@ -78,7 +78,9 @@
 }
 
 .password-container {
-  width: 85%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
   position: relative;
 }
 
@@ -121,25 +123,28 @@
 .google-btn,
 .microsoft-btn,
 .apple-btn {
+  position: relative;
   display: flex;
+  justify-content: center; 
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background-color: transparent;
-  background-color: #363636;
+  background-color: #111111;
   height: 48px;
   border-radius: 18px;
   color: white;
   font-weight: 500;
   cursor: pointer;
+  padding-left: 48px; 
 }
 
 .google-btn img,
 .microsoft-btn img,
 .apple-btn img {
+  position: absolute;
+  left: 16px;
   height: 20px;
   width: 20px;
 }
+
 
 .login-link {
   margin-top: 20px;
