@@ -50,9 +50,11 @@
   border: none;
   background-color: #1f2937;
   color: white;
-  margin-bottom: 16px;
   font-size: 14px;
 }
+
+/* Remove general input margin-bottom since we're using wrappers */
+
 
 .submit-button {
   width: 100%;
@@ -110,17 +112,135 @@
   color: white;
 }
 
+.input-wrapper,
 .password-wrapper {
   position: relative;
   width: 100%;
+  margin-bottom: 16px;
+}
+
+.input-wrapper .input,
+.password-wrapper .input {
+  width: 95%;
+  margin-bottom: 0;
 }
 
 .toggle-password {
   position: absolute;
-  right: 16px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 18px;
-  user-select: none;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  transition: color 0.2s ease;
+  height: 24px;
+  width: 24px;
+}
+
+.toggle-password:hover {
+  color: #14b8a6;
+}
+
+.toggle-password:hover {
+  color: #14b8a6;
+}
+
+/* photo */
+.photo-upload {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.photo-circle {
+  width: 80px;
+  height: 80px;
+  background-color: #555;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.camera-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.skip-button {
+  background: none;
+  color: #14b8a6;
+  border: none;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Purpose selection styles */
+.purpose-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.purpose-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  padding: 8px 0;
+}
+
+.purpose-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-custom {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #9ca3af;
+  display: inline-block;
+  position: relative;
+  margin-right: 10px;
+}
+
+.purpose-option input[type="radio"]:checked + .radio-custom {
+  border-color: #14b8a6;
+}
+
+.purpose-option input[type="radio"]:checked + .radio-custom::after {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #14b8a6;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.option-text {
+  color: white;
+  font-size: 14px;
 }
