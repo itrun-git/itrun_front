@@ -1,13 +1,39 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import "../Style/AutorizationForm.css";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigate, Link } from "react-router-dom";
+import * as yup from "yup";
 
+import "../Style/AutorizationForm.css";
 import LogoIcon from "../Logo/LogoIcon.png";
 import Logoapple from "../Logo/Logoapple.png";
 import Logogoogle from "../Logo/Logogoogle.png";
 import Logomicrosoft from "../Logo/Logomicrosoft.png";
 
+import { loginSchema } from "../Schema/ValidationService";
+
+interface LoginFormInputs {
+  email: string;
+  password: string;
+}
+
 const AutorizationForm: React.FC = () => {
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginFormInputs>({
+    resolver: yupResolver(loginSchema)
+  });
+
+  const onSubmit = (data: LoginFormInputs) => {
+    console.log("Данные авторизации:", data);
+
+    navigate("/mainform");
+  };
+
   return (
     <div className="registration-container">
       <div className="form-box">
@@ -17,42 +43,56 @@ const AutorizationForm: React.FC = () => {
         </div>
         <h3 className="title">Log in to continue</h3>
 
+        <form onSubmit={handleSubmit(onSubmit)} className="password-container">
+          <input
+            type="email"
+            placeholder="Email"
+            className="input"
+            {...register("email")}
+          />
+          {errors.email && <p className="error">{errors.email.message}</p>}
 
-        <div className="password-container">
-          <input type="email" placeholder="Email" className="input" />
-          <input type="password" placeholder="Password" className="input" />
+          <input
+            type="password"
+            placeholder="Password"
+            className="input"
+            {...register("password")}
+          />
+          {errors.password && <p className="error">{errors.password.message}</p>}
 
           <div className="options-row">
-             <input type="checkbox" /> Remember me
+            <input type="checkbox" />
             <label className="remember">
-             <a href="#" className="forgot">Forgot password?</a>
+              <a href="#" className="forgot">Forgot password?</a>
             </label>
           </div>
-        </div>
 
-        <button className="submit-button">Log in</button>
+          <button className="submit-button" type="submit">
+            Log in
+          </button>
+        </form>
 
         <div className="divider">
           <span>or continue with</span>
         </div>
 
-      <div className="social-buttons">
-        <button className="google-btn">
-          <img src={Logogoogle} alt="Google" />
-          Google
-        </button>
-        <button className="microsoft-btn">
-          <img src={Logomicrosoft} alt="Microsoft" />
-          Microsoft
-        </button>
-        <button className="apple-btn">
-          <img src={Logoapple} alt="Apple" />
-          Apple
-        </button>
-      </div>
+        <div className="social-buttons">
+          <button className="google-btn">
+            <img src={Logogoogle} alt="Google" />
+            Google
+          </button>
+          <button className="microsoft-btn">
+            <img src={Logomicrosoft} alt="Microsoft" />
+            Microsoft
+          </button>
+          <button className="apple-btn">
+            <img src={Logoapple} alt="Apple" />
+            Apple
+          </button>
+        </div>
 
         <div className="login-link">
-          Can’t log in?   <Link to="/register" >Create an account</Link>
+          Can’t log in? <Link to="/register">Create an account</Link>
         </div>
       </div>
     </div>

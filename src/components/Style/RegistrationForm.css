@@ -27,7 +27,7 @@
   width: 32px;
   height: 32px;
   margin-right: 8px;
-  filter: invert(50%) sepia(100%) saturate(500%) hue-rotate(120deg);
+  /* filter: invert(50%) sepia(100%) saturate(500%) hue-rotate(120deg); */
 }
 
 .title {
@@ -44,7 +44,7 @@
 }
 
 .input {
-  width: 100%;
+  width: 95%;
   padding: 12px;
   border-radius: 8px;
   border: none;
@@ -52,9 +52,6 @@
   color: white;
   font-size: 14px;
 }
-
-/* Remove general input margin-bottom since we're using wrappers */
-
 
 .submit-button {
   width: 100%;
@@ -222,10 +219,6 @@
   display: inline-block;
   position: relative;
   margin-right: 10px;
-}
-
-.purpose-option input[type="radio"]:checked + .radio-custom {
-  border-color: #14b8a6;
 }
 
 .purpose-option input[type="radio"]:checked + .radio-custom::after {

@@ -78,8 +78,8 @@
 }
 
 .password-container {
-  width: 100%;
-  overflow: hidden;
+  width: 98%;
+  /* overflow: hidden; */
   box-sizing: border-box;
   position: relative;
 }
