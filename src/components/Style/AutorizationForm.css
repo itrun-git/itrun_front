@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #000000;
+  background-image: url('../Logo/background.png');
   padding: 16px;
   box-sizing: border-box;
 }

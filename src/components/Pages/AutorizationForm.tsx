@@ -2,6 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, Link } from "react-router-dom";
+
 import * as yup from "yup";
 
 import "../Style/AutorizationForm.css";
@@ -11,6 +12,7 @@ import Logogoogle from "../Logo/Logogoogle.png";
 import Logomicrosoft from "../Logo/Logomicrosoft.png";
 
 import { loginSchema } from "../Schema/ValidationService";
+import { loginUser } from "../Api/api";
 
 interface LoginFormInputs {
   email: string;
@@ -23,15 +25,25 @@ const AutorizationForm: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<LoginFormInputs>({
-    resolver: yupResolver(loginSchema)
+    resolver: yupResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormInputs) => {
-    console.log("Данные авторизации:", data);
+  const onSubmit = async (data: LoginFormInputs) => {
+    try {
+      const response = await loginUser(data);
 
-    navigate("/mainform");
+      if (response.token) {
+        localStorage.setItem("authToken", response.token);
+        alert(response.message);
+        navigate("/mainform");
+      } else {
+        alert("Ошибка при авторизации: " + (response.message || "Неизвестная ошибка"));
+      }
+    } catch (error: any) {
+      alert("Ошибка при логине: " + error.message);
+    }
   };
 
   return (
@@ -61,9 +73,11 @@ const AutorizationForm: React.FC = () => {
           {errors.password && <p className="error">{errors.password.message}</p>}
 
           <div className="options-row">
-            <input type="checkbox" />
+            <input type="checkbox"/> Remember me 
             <label className="remember">
-              <a href="#" className="forgot">Forgot password?</a>
+              <a href="#" className="forgot">
+                Forgot password?
+              </a>
             </label>
           </div>
 

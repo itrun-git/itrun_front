@@ -22,3 +22,18 @@ export const passwordSchema = yup.object({
     .required("Password required")
     .min(8, "The password must be at least 8 characters long."),
 });
+
+// Валидация регистрации
+export const registerSchema = yup.object({
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Please enter a valid email address"),
+  fullName: yup
+    .string()
+    .required("Full name is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .min(8, "Password must be at least 8 characters long"),
+});

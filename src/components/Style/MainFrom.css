@@ -1,0 +1,9 @@
+.site-header {
+  position: sticky; /* или fixed */
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  /* background-color: white; */
+  border-bottom: 1px solid #ccc;
+  padding: 10px 20px;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -7,7 +7,7 @@ import "../Style/RegistrationForm.css";
 import LogoIcon from "../Logo/LogoIcon.png";
 import CameraIcon from "../Logo/camera.png";
 import { emailSchema, passwordSchema } from "../Schema/ValidationService";
-
+import { registerUser, CreateUserDto, UserPurpose, checkEmail, sendVerificationEmail } from "../Api/api";
 
 interface FormData {
   email: string;
@@ -19,44 +19,252 @@ interface FormData {
 const getSchemaForStep = (step: number) => {
   if (step === 1) return emailSchema;
   if (step === 2) return passwordSchema;
-  return yup.object(); 
+  if (step === 5) return emailSchema; // Для смены email на 5 шаге
+  return yup.object();
 };
 
 const RegistrationForm: React.FC = () => {
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
-  const [purpose, setPurpose] = useState("personal");
+  const [purpose, setPurposeValue] = useState<UserPurpose>(UserPurpose.PERSONAL);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
   
+  // Новые состояния для 5-й формы
+  const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
+  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [timer, setTimer] = useState(0);
+  const [showChangeEmail, setShowChangeEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<any>({
+    getValues,
+    setValue,
+    watch
+  } = useForm<FormData>({
     resolver: yupResolver(getSchemaForStep(step)),
     mode: "onChange",
   });
 
-
-  const onSubmit = (data: FormData) => {
-    if (step === 3) {
-      setStep(4);
-    } else if (step === 4) {
-      console.log("Регистрация завершена", data);
-      navigate("/mainform");
-    } else {
-      setStep(step + 1);
+  // Таймер для кнопки отправки email
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer(timer - 1);
+      }, 1000);
     }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  // Функция для проверки размера файла
+  const validateFile = (file: File): string | null => {
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_SIZE) {
+      return 'Размер файла не должен превышать 5MB';
+    }
+    if (!file.type.startsWith('image/')) {
+      return 'Можно загружать только изображения';
+    }
+    return null;
   };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhotoPreview(URL.createObjectURL(file));
+    setPhotoError(null);
+    
+    if (!file) {
+      setPhotoFile(null);
+      setPhotoPreview(null);
+      return;
     }
+
+    // Проверяем файл
+    const validationError = validateFile(file);
+    if (validationError) {
+      setPhotoError(validationError);
+      return;
+    }
+
+    try {
+      setPhotoFile(file);
+      // Создаем превью
+      setPhotoPreview(URL.createObjectURL(file));
+    } catch (error) {
+      setPhotoError('Ошибка при обработке файла');
+      console.error('Photo upload error:', error);
+    }
+  };
+
+  // Функция загрузки фото на сервер
+  const uploadPhoto = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const response = await fetch('http://localhost:3002/api/upload/avatar', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload photo');
+    }
+
+    const result = await response.json();
+    return result.url; // Предполагается, что сервер возвращает URL загруженного файла
+  };
+
+  // Функция отправки письма подтверждения
+  const handleSendVerificationEmail = async (userId?: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const userIdToUse = userId || registeredUserId;
+      if (!userIdToUse) {
+        throw new Error('User ID not found');
+      }
+
+      await sendVerificationEmail(userIdToUse);
+      setIsEmailSent(true);
+      setTimer(60); // 1 минута
+      console.log('Письмо подтверждения отправлено');
+    } catch (err: any) {
+      setError(err.message || 'Ошибка при отправке письма');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Функция смены email
+  const handleChangeEmail = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Проверяем новый email
+      const emailCheck = await checkEmail(newEmail);
+      if (!emailCheck.available) {
+        setError("Этот email уже используется");
+        return;
+      }
+
+      // Здесь должен быть API вызов для обновления email пользователя
+      // Пока просто обновляем локальное состояние
+      setValue("email", newEmail);
+      setShowChangeEmail(false);
+      setIsEmailSent(false);
+      setTimer(0);
+      
+      console.log('Email изменен на:', newEmail);
+      
+      // Отправляем письмо на новый email
+      await handleSendVerificationEmail();
+      
+    } catch (err: any) {
+      setError(err.message || 'Ошибка при смене email');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      setError(null);
+
+      // Если первый шаг - проверяем доступность email
+      if (step === 1) {
+        setLoading(true);
+        try {
+          const emailCheck = await checkEmail(data.email);
+          if (!emailCheck.available) {
+            setError("Этот email уже используется");
+            setLoading(false);
+            return;
+          }
+        } catch (emailError) {
+          console.warn('Ошибка проверки email:', emailError);
+        }
+        setLoading(false);
+        setStep(step + 1);
+        return;
+      }
+
+      // Если не 4-й шаг - перейти на следующий
+      if (step < 4) {
+        setStep(step + 1);
+        return;
+      }
+
+      // 4-й шаг - регистрация пользователя
+      if (step === 4) {
+        setLoading(true);
+
+        // Подготавливаем данные для отправки (без фото и purpose пока)
+        const userData: CreateUserDto = {
+          email: data.email,
+          name: data.fullName,      // Отправляем fullName как name
+          password: data.password,  // Отправляем пароль
+        };
+
+        console.log('Отправляем данные на сервер:', userData);
+        
+        // Регистрируем пользователя
+        const newUser = await registerUser(userData);
+        setRegisteredUserId(newUser.id);
+
+        // Устанавливаем purpose отдельным запросом после регистрации
+        if (newUser.id) {
+          try {
+            await setUserPurpose({
+              userId: newUser.id,
+              purpose: purpose
+            });
+            console.log('Purpose установлен успешно');
+          } catch (purposeError) {
+            console.warn('Ошибка при установке purpose:', purposeError);
+          }
+        }
+
+        // TODO: Загрузка фото будет добавлена позже, когда будет готов endpoint на бэкенде
+        if (photoFile) {
+          console.log('Фото выбрано:', photoFile.name, 'но пока не загружается - нет endpoint на бэкенде');
+        }
+
+        console.log('Регистрация успешна! Переходим к подтверждению email');
+        // Переходим к 5-му шагу
+        setStep(5);
+        // Автоматически отправляем письмо подтверждения
+        await handleSendVerificationEmail(newUser.id);
+        return;
+      }
+
+      // 5-й шаг - обработка смены email
+      if (step === 5 && showChangeEmail) {
+        await handleChangeEmail();
+        return;
+      }
+
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || "Произошла ошибка регистрации");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -67,11 +275,15 @@ const RegistrationForm: React.FC = () => {
           <h2>ItRun</h2>
         </div>
 
+        {error && <div className="error-banner">{error}</div>}
+
         <form onSubmit={handleSubmit(onSubmit)}>
           {step === 1 && (
             <>
               <h3 className="title">Let's get you started</h3>
-              <p className="subtitle">Organize your tasks, projects and team in one place.</p>
+              <p className="subtitle">
+                Organize your tasks, projects and team in one place.
+              </p>
 
               <input
                 type="email"
@@ -79,9 +291,11 @@ const RegistrationForm: React.FC = () => {
                 className="input"
                 {...register("email")}
               />
-              {errors.email?.message && <p className="error">{String(errors.email.message)}</p>}
+              {errors.email && (
+                <p className="error">{String(errors.email.message)}</p>
+              )}
 
-              <button className="submit-button" type="submit">
+              <button className="submit-button" type="submit" disabled={loading}>
                 Continue
               </button>
             </>
@@ -90,7 +304,9 @@ const RegistrationForm: React.FC = () => {
           {step === 2 && (
             <>
               <h3 className="title">A few more details</h3>
-              <p className="subtitle">Let's set up your profile and keep your account secure.</p>
+              <p className="subtitle">
+                Let's set up your profile and keep your account secure.
+              </p>
 
               <input
                 type="text"
@@ -98,7 +314,9 @@ const RegistrationForm: React.FC = () => {
                 className="input"
                 {...register("fullName")}
               />
-              {errors.fullName?.message && <p className="error">{String(errors.fullName.message)}</p>}
+              {errors.fullName && (
+                <p className="error">{String(errors.fullName.message)}</p>
+              )}
 
               <div className="password-wrapper">
                 <input
@@ -115,9 +333,11 @@ const RegistrationForm: React.FC = () => {
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
-              {errors.password?.message && <p className="error">{String(errors.password.message)}</p>}
+              {errors.password && (
+                <p className="error">{String(errors.password.message)}</p>
+              )}
 
-              <button className="submit-button" type="submit">
+              <button className="submit-button" type="submit" disabled={loading}>
                 Continue
               </button>
             </>
@@ -126,7 +346,9 @@ const RegistrationForm: React.FC = () => {
           {step === 3 && (
             <>
               <h3 className="title">Add a profile photo</h3>
-              <p className="subtitle">Have a favorite selfie? Upload it now</p>
+              <p className="subtitle">Have a favorite selfie? Upload it now (max 5MB)</p>
+
+              {photoError && <p className="error">{photoError}</p>}
 
               <div className="photo-upload">
                 <label htmlFor="file-upload" className="photo-circle">
@@ -141,15 +363,25 @@ const RegistrationForm: React.FC = () => {
                   id="file-upload"
                   accept="image/*"
                   style={{ display: "none" }}
-                  {...register("photo")}
                   onChange={handlePhotoUpload}
                 />
               </div>
 
-              <button className="submit-button" type="submit">
+              {photoFile && (
+                <p className="photo-info">
+                  Выбрано: {photoFile.name} ({(photoFile.size / (1024 * 1024)).toFixed(2)}MB)
+                </p>
+              )}
+
+              <button className="submit-button" type="submit" disabled={loading}>
                 Continue
               </button>
-              <button type="button" className="skip-button" onClick={() => setStep(4)}>
+              <button
+                type="button"
+                className="skip-button"
+                onClick={() => setStep(4)}
+                disabled={loading}
+              >
                 Skip
               </button>
             </>
@@ -158,14 +390,16 @@ const RegistrationForm: React.FC = () => {
           {step === 4 && (
             <>
               <h3 className="title">What do you need to do?</h3>
-              <p className="subtitle">This will help us personalize your setup experience.</p>
+              <p className="subtitle">
+                This will help us personalize your setup experience.
+              </p>
 
               <div className="purpose-options">
                 {[
-                  { label: "Track personal tasks", value: "personal" },
-                  { label: "Manage a team or projects", value: "team" },
-                  { label: "Organize events", value: "events" },
-                  { label: "Other", value: "other" },
+                  { label: "Track personal tasks", value: UserPurpose.PERSONAL },
+                  { label: "Manage a team or projects", value: UserPurpose.TEAM },
+                  { label: "Organize events", value: UserPurpose.EVENTS },
+                  { label: "Other", value: UserPurpose.OTHER },
                 ].map((opt) => (
                   <label key={opt.value} className="purpose-option">
                     <input
@@ -173,7 +407,7 @@ const RegistrationForm: React.FC = () => {
                       name="purpose"
                       value={opt.value}
                       checked={purpose === opt.value}
-                      onChange={() => setPurpose(opt.value)}
+                      onChange={() => setPurposeValue(opt.value)}
                     />
                     <span className="radio-custom"></span>
                     <span className="option-text">{opt.label}</span>
@@ -181,9 +415,82 @@ const RegistrationForm: React.FC = () => {
                 ))}
               </div>
 
-              <button onClick={() => navigate("/mainform")} className="submit-button" type="submit" >
-                Continue  
+              <button className="submit-button" type="submit" disabled={loading}>
+                {loading ? "Processing..." : "Continue"}
               </button>
+            </>
+          )}
+
+          {step === 5 && (
+            <>
+              <h3 className="title">Welcome to ItRun</h3>
+              <p className="subtitle">
+                Registration is almost complete! A confirmation email has been sent to your 
+                account. Please verify your email by clicking the link in the email.
+              </p>
+
+              {!showChangeEmail ? (
+                <>
+                  <button 
+                    className="submit-button" 
+                    type="button"
+                    disabled={loading || timer > 0}
+                    onClick={() => handleSendVerificationEmail()}
+                  >
+                    {loading ? "Sending..." : timer > 0 ? `Resend (${formatTime(timer)})` : "Send Email"}
+                  </button>
+
+                  <p className="email-info">
+                    {timer > 0 ? `You can resend in ${formatTime(timer)}` : "Click to send verification email"}
+                  </p>
+
+                  <button 
+                    type="button" 
+                    className="change-email-button"
+                    onClick={() => {
+                      setShowChangeEmail(true);
+                      setNewEmail(getValues("email"));
+                    }}
+                  >
+                    Change email
+                  </button>
+
+                  <p className="login-link">
+                    Already have an account? <button type="button" onClick={() => navigate("/login")} className="link-button">Sign In</button>
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="title">Something went wrong?</h3>
+                  <p className="subtitle">
+                    You can change your email right here. You won't have to type other data again!
+                  </p>
+
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    className="input"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                  />
+                  {errors.email && (
+                    <p className="error">{String(errors.email.message)}</p>
+                  )}
+
+                  <button 
+                    className="submit-button" 
+                    type="button"
+                    disabled={loading || !newEmail}
+                    onClick={handleChangeEmail}
+                  >
+                    {loading ? "Processing..." : "Continue"}
+                  </button>
+
+                  <p className="login-link">
+                    Already have an account? <button type="button" onClick={() => navigate("/login")} className="link-button">Sign In</button>
+                  </p>
+                </>
+              )}
             </>
           )}
         </form>
@@ -191,7 +498,9 @@ const RegistrationForm: React.FC = () => {
         <div className="steps">
           <div className={`step ${step >= 1 ? "active" : ""}`}>1</div>
           <div className={`step ${step >= 2 ? "active" : ""}`}>2</div>
-          <div className={`step ${step >= 4 ? "active" : ""}`}>✓</div>
+          <div className={`step ${step >= 3 ? "active" : ""}`}>3</div>
+          <div className={`step ${step >= 4 ? "active" : ""}`}>4</div>
+          <div className={`step ${step >= 5 ? "active" : ""}`}>✓</div>
         </div>
       </div>
     </div>
