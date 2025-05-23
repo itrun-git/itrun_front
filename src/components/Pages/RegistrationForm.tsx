@@ -19,7 +19,7 @@ interface FormData {
 const getSchemaForStep = (step: number) => {
   if (step === 1) return emailSchema;
   if (step === 2) return passwordSchema;
-  if (step === 5) return emailSchema; // Для смены email на 5 шаге
+  if (step === 5) return emailSchema; 
   return yup.object();
 };
 
