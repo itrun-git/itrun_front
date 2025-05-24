@@ -25,7 +25,9 @@ a:hover {
 body {
   margin: 0;
   /* display: flex; */
-  place-items: center;
+  background-size: cover; 
+  background-repeat: no-repeat;
+  /* place-items: center; */
   background-image: url(/src/components/Logo/background.png);
   /* min-width: 320px;
   min-height: 100vh; */

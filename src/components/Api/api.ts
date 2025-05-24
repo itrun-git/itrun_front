@@ -11,7 +11,8 @@
   export interface CreateUserDto {
     email: string;
     password: string;    
-    name: string;         
+    name: string;   
+    avatarUrl?: string;      
   }
 
   export interface LoginDto {
@@ -31,8 +32,8 @@
   export interface User {
     id: string;
     email: string;
-    name: string; // В ответе от сервера может быть name
-    fullName?: string; // Или fullName
+    name: string; 
+    fullName?: string; 
     passwordHash: string;
     avatarUrl?: string;
     purpose: UserPurpose;
@@ -42,8 +43,6 @@
     createdAt: string;
     updatedAt: string;
   }
-
-  // --- API Methods ---
 
   // Check if email is available
   export async function checkEmail(email: string): Promise<{ available: boolean }> {
@@ -146,33 +145,52 @@
     return response.json();
   }
 
-  // Set user purpose (оставляем для совместимости, если нужно)
-  export async function setUserPurpose(dto: SetPurposeDto): Promise<User> {
-    const response = await fetch(`${API_URL}/user/set-purpose`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to set purpose');
-    }
-    return response.json();
-  }
-
   // Upload avatar image
-  export async function uploadAvatar(file: File): Promise<{ url: string }> {
+  export async function uploadAvatar(file: File, userId: string): Promise<User> {
     const formData = new FormData();
     formData.append('avatar', file);
+    formData.append('userId', userId);
 
-    const response = await fetch(`${API_URL}/upload/avatar`, {
-      method: 'POST',
-      body: formData,
-    });
+    const response = await fetch(`${API_URL}/auth/upload-avatar`, {
+    method: 'PATCH', 
+    body: formData,
+  });
 
-    if (!response.ok) {
-      throw new Error('Failed to upload avatar');
-    }
-
-    return response.json();
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to upload avatar');
   }
+
+  return response.json();
+}
+
+  // Исправить метод для setPurpose
+  export async function setUserPurpose(dto: SetPurposeDto): Promise<User> {
+    const response = await fetch(`${API_URL}/auth/set-purpose`, { 
+    method: 'PATCH', 
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to set purpose');
+  }
+  return response.json();
+}
+
+  //Update email
+  export async function updateEmail(userId: string, email: string) {
+  const response = await fetch(`${API_URL}/auth/update-email`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ newEmail: email }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update email');
+  }
+
+  return await response.json();
+}

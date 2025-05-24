@@ -1,9 +1,8 @@
-.site-header {
-  position: sticky; /* или fixed */
-  top: 0;
+.main-page {
+  height: 100vh;
   width: 100%;
-  z-index: 1000;
-  /* background-color: white; */
-  border-bottom: 1px solid #ccc;
-  padding: 10px 20px;
+  background-image: url('../Logo/background.png'); 
+  background-size: cover;
+  background-position: center;
+  position: relative; 
 }

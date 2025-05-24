@@ -9,7 +9,7 @@ const VerifyEmailRedirect: React.FC = () => {
   const token = searchParams.get("token");
 
 useEffect(() => {
-  console.log("token from URL:", token); // ← проверь, выводится ли
+  console.log("token from URL:", token); 
 
   if (!token) {
     navigate("/login");

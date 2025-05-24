@@ -1,0 +1,98 @@
+.header {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+  gap: 40px; 
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.logo img {
+  height: 24px;
+  margin-right: 8px;
+}
+
+.menu {
+  display: flex;
+  gap: 16px;
+}
+
+.menu-item {
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.create-btn {
+  background-color: #00d1d1;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.search {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.icon {
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  background-color: orange;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 10px;
+}
+
+.avatar-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: gray;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 10px;
+}
