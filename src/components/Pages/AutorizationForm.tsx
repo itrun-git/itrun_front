@@ -53,6 +53,7 @@ const AutorizationForm: React.FC = () => {
           <img src={LogoIcon} alt="ItRun Logo" className="logo" />
           <h2>ItRun</h2>
         </div>
+        
         <h3 className="title">Log in to continue</h3>
 
         <form onSubmit={handleSubmit(onSubmit)} className="password-container">
@@ -106,7 +107,7 @@ const AutorizationForm: React.FC = () => {
         </div>
 
         <div className="login-link">
-          Can’t log in? <Link to="/register">Create an account</Link>
+          Can't log in? <Link to="/register">Create an account</Link>
         </div>
       </div>
     </div>

@@ -1,0 +1,25 @@
+{
+  //navbarmenu 
+  "requests": [
+    {
+      "method": "GET",
+      "endpoint": "/api/user/fullName",
+      "description": "имя"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/user/email",
+      "description": "почта"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/user/avatar",
+      "description": "аватар"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/user/logout",
+      "description": "Выход из системы"
+    }
+  ]
+}

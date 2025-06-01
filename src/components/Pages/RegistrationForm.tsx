@@ -7,7 +7,7 @@ import "../Style/RegistrationForm.css";
 import LogoIcon from "../Logo/LogoIcon.png";
 import CameraIcon from "../Logo/camera.png";
 import { emailSchema, passwordSchema } from "../Schema/ValidationService";
-import { registerUser, CreateUserDto, UserPurpose, checkEmail, sendVerificationEmail, updateEmail, setUserPurpose, uploadAvatar } from "../Api/api";
+import { registerUser, CreateUserDto, UserPurpose, checkEmail, sendVerificationEmail, changeUserEmail, setUserPurpose, uploadAvatar } from "../Api/api";
 
 interface FormData {
   email: string;
@@ -139,21 +139,24 @@ const RegistrationForm: React.FC = () => {
 
   // Функция смены email
   const handleChangeEmail = async () => {
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
+    // Проверяем доступность нового email
     const emailCheck = await checkEmail(newEmail);
     if (!emailCheck.available) {
       setError("Этот email уже используется");
       return;
     }
 
-    if (!registeredUserId) {
-      throw new Error("Неизвестный пользователь");
-    }
-    await updateEmail(registeredUserId, newEmail);
+    // Получаем текущий email из формы
+    const currentEmail = getValues("email");
+    
+    // Вызываем API с правильными параметрами
+    await changeUserEmail(currentEmail, newEmail);
 
+    // Обновляем email в форме
     setValue("email", newEmail);
     setShowChangeEmail(false);
     setIsEmailSent(false);
@@ -161,6 +164,7 @@ const RegistrationForm: React.FC = () => {
 
     console.log('Email изменен и обновлен на сервере:', newEmail);
 
+    // Отправляем письмо подтверждения на новый email
     await handleSendVerificationEmail();
     } catch (err: any) {
       setError(err.message || 'Ошибка при смене email');

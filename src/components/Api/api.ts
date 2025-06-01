@@ -7,7 +7,6 @@
     OTHER = 'other',
   }
 
-  // Минимальный интерфейс для регистрации (только то, что принимает бэкенд)
   export interface CreateUserDto {
     email: string;
     password: string;    
@@ -164,7 +163,7 @@
   return response.json();
 }
 
-  // Исправить метод для setPurpose
+  //setPurpose
   export async function setUserPurpose(dto: SetPurposeDto): Promise<User> {
     const response = await fetch(`${API_URL}/auth/set-purpose`, { 
     method: 'PATCH', 
@@ -178,7 +177,116 @@
   return response.json();
 }
 
-  //Update email
+  //Update email 
+  export async function changeUserEmail(currentEmail: string, newEmail: string) {
+  const response = await fetch(`${API_URL}/auth/change-email`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      currentEmail,
+      newEmail,
+    }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to change email');
+  }
+
+  return await response.json();
+}
+
+//-----Тут методы после авторизации пользователя------
+// Get user full name 
+export async function getUserFullName(token: string): Promise<{ fullName: string }> {
+  const response = await fetch(`${API_URL}/user/fullName`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || 'Failed to get user full name');
+  }
+
+  const text = await response.text();
+  return { fullName: text }; // оборачиваем вручную
+}
+
+
+// Get user email   
+export async function getUserEmail(token: string): Promise<{ email: string }> {
+  const response = await fetch(`${API_URL}/user/email`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to get user email');
+  }
+  const text = await response.text();
+  return { email: text };
+}
+
+// Get user avatar URL 
+export async function getUserAvatar(token: string): Promise<{ avatarUrl: string | null }> {
+  const response = await fetch(`${API_URL}/user/avatar`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to get user avatar');
+  }
+  const text = await response.text();
+  const result = `http://localhost:3002` + text;
+  return { avatarUrl: result };
+
+}
+
+// Get user purpose 
+export async function getUserPurpose(token: string): Promise<{ purpose: UserPurpose }> {
+  const response = await fetch(`${API_URL}/user/purpose`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to get user purpose');
+  }
+  return response.json();
+}
+
+// Logout user
+export async function logoutUser(token: string): Promise<{ message: string }> {
+  const response = await fetch(`${API_URL}/auth/logout`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to logout');
+  }
+  return response.json();
+}
+
+  //Update email 
   export async function updateEmail(userId: string, email: string) {
   const response = await fetch(`${API_URL}/auth/update-email`, {
     method: 'PATCH',

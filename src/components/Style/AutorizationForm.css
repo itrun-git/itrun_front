@@ -1,10 +1,14 @@
 .registration-container {
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('../Logo/background.png');
+  background-image: url('../Logo/background.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   padding: 16px;
   box-sizing: border-box;
 }
@@ -13,14 +17,12 @@
   width: 100%;
   max-width: 420px;
   background-color: #1b1b1b;
-  /* border: 1px solid #00ffff; */
   border-radius: 16px;
   padding: 32px 24px;
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); */
 }
 
 .logo-section {
@@ -74,12 +76,11 @@
 
 .remember{
   display: flex;
-  margin-left:  auto;
+  margin-left: auto;
 }
 
 .password-container {
   width: 98%;
-  /* overflow: hidden; */
   box-sizing: border-box;
   position: relative;
 }
@@ -144,7 +145,6 @@
   height: 20px;
   width: 20px;
 }
-
 
 .login-link {
   margin-top: 20px;

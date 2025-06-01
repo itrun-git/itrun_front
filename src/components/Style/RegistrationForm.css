@@ -2,8 +2,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background-image: url('../Logo/background.png');
+  min-height: 100vh;
+  background-image: url('../Logo/background.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .form-box {
@@ -30,7 +34,7 @@
 }
 
 .title {
-  font-size: 20px;
+  /* font-size: 20px; */
   font-weight: bold;
   color: white;
   margin-bottom: 8px;
@@ -143,11 +147,6 @@
   color: #14b8a6;
 }
 
-.toggle-password:hover {
-  color: #14b8a6;
-}
-
-/* photo */
 .photo-upload {
   display: flex;
   justify-content: center;
@@ -186,7 +185,6 @@
   font-size: 14px;
 }
 
-/* Purpose selection styles */
 .purpose-options {
   display: flex;
   flex-direction: column;
