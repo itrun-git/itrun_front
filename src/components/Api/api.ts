@@ -1,151 +1,168 @@
-  const API_URL = 'http://localhost:3002/api';
+const API_URL = 'http://localhost:3002/api';
 
-  export enum UserPurpose {
-    PERSONAL = 'personal',
-    TEAM = 'team',
-    EVENTS = 'events',
-    OTHER = 'other',
-  }
+export enum UserPurpose {
+  PERSONAL = 'personal',
+  TEAM = 'team',
+  EVENTS = 'events',
+  OTHER = 'other',
+}
 
-  export interface CreateUserDto {
-    email: string;
-    password: string;    
-    name: string;   
-    avatarUrl?: string;      
-  }
+export interface CreateUserDto {
+  email: string;
+  password: string;    
+  name: string;   
+  avatarUrl?: string;      
+}
 
-  export interface LoginDto {
-    email: string;
-    password: string;
-  }
+export interface LoginDto {
+  email: string;
+  password: string;
+}
 
-  export interface EmailCheckDto {
-    email: string;
-  }
+export interface EmailCheckDto {
+  email: string;
+}
 
-  export interface SetPurposeDto {
-    userId: string;
-    purpose: UserPurpose;
-  }
+export interface SetPurposeDto {
+  userId: string;
+  purpose: UserPurpose;
+}
 
-  export interface User {
-    id: string;
-    email: string;
-    name: string; 
-    fullName?: string; 
-    passwordHash: string;
-    avatarUrl?: string;
-    purpose: UserPurpose;
-    emailVerified?: boolean;
-    verificationToken?: string;
-    isActive?: boolean;
-    createdAt: string;
-    updatedAt: string;
-  }
+export interface User {
+  id: string;
+  email: string;
+  name: string; 
+  fullName?: string; 
+  passwordHash: string;
+  avatarUrl?: string;
+  purpose: UserPurpose;
+  emailVerified?: boolean;
+  verificationToken?: string;
+  isActive?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  // Check if email is available
-  export async function checkEmail(email: string): Promise<{ available: boolean }> {
+//----------Mainpage Interface----------//
+export interface Workspace {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateWorkspaceDto{
+  name: string;
+}
+
+export interface UpdateWorkspaceDto{
+  id: string;
+  name: string; 
+}
+
+// Проверьте, доступна ли электронная почта
+export async function checkEmail(email: string): Promise<{ available: boolean }> {
     const response = await fetch(`${API_URL}/auth/check-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    if (!response.ok) throw new Error('Failed to check email');
-    return response.json();
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!response.ok) throw new Error('Failed to check email');
+  return response.json();
+}
+
+// Регистрация нового юзера
+export async function registerUser(data: CreateUserDto): Promise<User> {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.message || 'Ошибка регистрации');
   }
+  return response.json();
+}
 
-  // Register new user - отправляем данные согласно DTO бэкенда
-  export async function registerUser(data: CreateUserDto): Promise<User> {
-    const response = await fetch(`${API_URL}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.message || 'Ошибка регистрации');
-    }
-    return response.json();
+// Логин пользователя
+export async function loginUser(dto: LoginDto): Promise<{ message: string; token: string }> {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Login failed');
   }
+  return response.json();
+}
 
-  // Login user
-  export async function loginUser(dto: LoginDto): Promise<{ message: string; token: string }> {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(dto),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Login failed');
-    }
-    return response.json();
+// Отправка письма потдтверждения
+export async function sendVerificationEmail(userId: string): Promise<void> {
+  const response = await fetch(`${API_URL}/auth/send-verification`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ userId }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to send verification email');
   }
+}
 
-  // Send verification email
-  export async function sendVerificationEmail(userId: string): Promise<void> {
-    const response = await fetch(`${API_URL}/auth/send-verification`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId }),
-    });
+// Подтверждения почты через токен
+export async function confirmEmail(token: string): Promise<void> {
+  const response = await fetch(`${API_URL}/auth/verify?token=${token}`, {
+    method: 'GET',
+  });
+  if (!response.ok) throw new Error('Email confirmation failed');
+}
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to send verification email');
-    }
-  }
+// Повторная отправка подтверждения по электронной почте
+export async function resendVerificationEmail(email: string): Promise<void> {
+  const response = await fetch(`${API_URL}/auth/resend-verification-email`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
+  if (!response.ok) throw new Error('Failed to resend verification email');
+}
 
-  // Confirm email verification with token
-  export async function confirmEmail(token: string): Promise<void> {
-    const response = await fetch(`${API_URL}/auth/verify?token=${token}`, {
-      method: 'GET',
-    });
-    if (!response.ok) throw new Error('Email confirmation failed');
-  }
+// Get all users
+export async function getAllUsers(): Promise<User[]> {
+  const response = await fetch(`${API_URL}/user`, {
+    method: 'GET',
+  });
+  if (!response.ok) throw new Error('Failed to fetch users');
+  return response.json();
+}
 
-  // Resend verification email
-  export async function resendVerificationEmail(email: string): Promise<void> {
-    const response = await fetch(`${API_URL}/auth/resend-verification-email`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    });
-    if (!response.ok) throw new Error('Failed to resend verification email');
-  }
-
-  // Get all users
-  export async function getAllUsers(): Promise<User[]> {
-    const response = await fetch(`${API_URL}/user`, {
-      method: 'GET',
-    });
-    if (!response.ok) throw new Error('Failed to fetch users');
-    return response.json();
-  }
-
-  // Get user by ID
+// Get user по ID 
   export async function getUserById(id: string): Promise<User> {
     const response = await fetch(`${API_URL}/user/${id}`, {
       method: 'GET',
     });
     if (!response.ok) throw new Error('Failed to fetch user');
     return response.json();
-  }
+}
 
-  // Delete user by ID
-  export async function deleteUserById(id: string): Promise<{ message: string }> {
+// Удаление юзера по айди
+export async function deleteUserById(id: string): Promise<{ message: string }> {
     const response = await fetch(`${API_URL}/user/${id}`, {
       method: 'DELETE',
     });
     if (!response.ok) throw new Error('Failed to delete user');
     return response.json();
-  }
+}
 
-  // Upload avatar image
-  export async function uploadAvatar(file: File, userId: string): Promise<User> {
+// Загрузка аватара
+export async function uploadAvatar(file: File, userId: string): Promise<User> {
     const formData = new FormData();
     formData.append('avatar', file);
     formData.append('userId', userId);
@@ -163,8 +180,8 @@
   return response.json();
 }
 
-  //setPurpose
-  export async function setUserPurpose(dto: SetPurposeDto): Promise<User> {
+//Цель
+export async function setUserPurpose(dto: SetPurposeDto): Promise<User> {
     const response = await fetch(`${API_URL}/auth/set-purpose`, { 
     method: 'PATCH', 
     headers: { 'Content-Type': 'application/json' },
@@ -177,8 +194,8 @@
   return response.json();
 }
 
-  //Update email 
-  export async function changeUserEmail(currentEmail: string, newEmail: string) {
+//Обновление эмейла 
+export async function changeUserEmail(currentEmail: string, newEmail: string) {
   const response = await fetch(`${API_URL}/auth/change-email`, {
     method: 'PATCH',
     headers: {
@@ -198,7 +215,7 @@
 }
 
 //-----Тут методы после авторизации пользователя------
-// Get user full name 
+// Получения полного имени юзера
 export async function getUserFullName(token: string): Promise<{ fullName: string }> {
   const response = await fetch(`${API_URL}/user/fullName`, {
     method: 'GET',
@@ -218,7 +235,7 @@ export async function getUserFullName(token: string): Promise<{ fullName: string
 }
 
 
-// Get user email   
+// (Get) получение почты юзера   
 export async function getUserEmail(token: string): Promise<{ email: string }> {
   const response = await fetch(`${API_URL}/user/email`, {
     method: 'GET',
@@ -235,7 +252,7 @@ export async function getUserEmail(token: string): Promise<{ email: string }> {
   return { email: text };
 }
 
-// Get user avatar URL 
+// (Get) получение аватара юзера
 export async function getUserAvatar(token: string): Promise<{ avatarUrl: string | null }> {
   const response = await fetch(`${API_URL}/user/avatar`, {
     method: 'GET',
@@ -254,7 +271,7 @@ export async function getUserAvatar(token: string): Promise<{ avatarUrl: string 
 
 }
 
-// Get user purpose 
+// Get) полученеи цели юзера
 export async function getUserPurpose(token: string): Promise<{ purpose: UserPurpose }> {
   const response = await fetch(`${API_URL}/user/purpose`, {
     method: 'GET',
@@ -270,7 +287,7 @@ export async function getUserPurpose(token: string): Promise<{ purpose: UserPurp
   return response.json();
 }
 
-// Logout user
+// (Logout) Выход
 export async function logoutUser(token: string): Promise<{ message: string }> {
   const response = await fetch(`${API_URL}/auth/logout`, {
     method: 'POST',
@@ -286,8 +303,8 @@ export async function logoutUser(token: string): Promise<{ message: string }> {
   return response.json();
 }
 
-  //Update email 
-  export async function updateEmail(userId: string, email: string) {
+//Обновление почты
+export async function updateEmail(userId: string, email: string) {
   const response = await fetch(`${API_URL}/auth/update-email`, {
     method: 'PATCH',
     headers: {
@@ -301,4 +318,93 @@ export async function logoutUser(token: string): Promise<{ message: string }> {
   }
 
   return await response.json();
+}
+
+//---------MainPage Api---------
+// Получение всех воркспейсов пользователя
+export async function getUserWorkspaces(token: string): Promise<Workspace[]>{
+  const response = await fetch(`${API_URL}/user/workspaces`, {
+    method: 'GET',
+    headers: {
+      'Authorization' : `Bearer ${token}`,
+      'Content-Type' : 'application/json',
+    },
+  });
+
+  if (!response.ok){
+    const error = await response.json();
+    throw new Error(error.message || "No workspaces found for this user")
+  }
+  return response.json();
+}
+
+//---------Workspace Api---------
+//---------Создание нового воркспейса---------
+export async function createWorkspace(token: string, data: CreateUserDto): Promise<Workspace>{
+  const response = await fetch (`${API_URL}/workspace` , {
+    method: 'POST',
+    headers: {
+      'Authorization' : `Bearer ${token}`,
+      'Content-Type' : 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok){
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to create workspace');
+  }
+  return response.json();
+}
+
+//---------обновление нового воркспейса---------
+export async function updateWorkspace(token: string, data: UpdateWorkspaceDto): Promise<Workspace>{
+  const response = await fetch (`${API_URL}/workspace/${data.id}/members` , {
+    method: 'PATCH',
+    headers: {
+      'Authorization' : `Bearer ${token}`,
+      'Content-Type' : 'application/json',
+    },
+    body: JSON.stringify({name: data.name}),
+  });
+
+  if (!response.ok){
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to update workspace');
+  }
+  return response.json();
+}
+
+//---------удаление нового воркспейса---------
+export async function deleteWorkspace(token: string, workspaceId: string): Promise<{message: string}>{
+  const response = await fetch (`${API_URL}/workspace/${workspaceId}` , {
+    method: 'DELETE',
+    headers: {
+      'Authorization' : `Bearer ${token}`,
+      'Content-Type' : 'application/json',
+    },
+  });
+
+  if (!response.ok){
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to update workspace');
+  }
+  return response.json();
+}
+
+//---------Получение воркспейса по ID---------
+export async function getWorkspaceById(token: string, workspaceId: string): Promise<Workspace>{
+  const response = await fetch (`${API_URL}/workspace/${workspaceId}` , {
+    method: 'GET',
+    headers: {
+      'Authorization' : `Bearer ${token}`,
+      'Content-Type' : 'application/json',
+    },
+  });
+
+  if (!response.ok){
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to update workspace');
+  }
+  return response.json();
 }

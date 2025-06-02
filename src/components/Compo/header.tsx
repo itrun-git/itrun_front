@@ -2,18 +2,30 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../Style/HeaderMenu.css';
 import LogoIcon from "../Logo/LogoIcon.png";
 import { getUserFullName, getUserEmail, getUserAvatar, logoutUser } from '../Api/api';
+import { useNavigate } from 'react-router-dom';
+import MainForm from '../Pages/MainForm';
 
 const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const [userData, setUserData] = useState({
+  const [userData, setUserData] = useState<{
+    name: string;
+    email: string;
+    avatar: string | null;
+  }>({
     name: '',
     email: '',
-    avatar: null
+    avatar: null,
   });
   const [loading, setLoading] = useState(true);
 
-  const menuRef = useRef(null);
+  const menuRef = useRef <HTMLDivElement> (null);
   const token = localStorage.getItem('authToken');
+
+  //Навигация на mainform
+  const navigate = useNavigate();
+  const handleTabClick = () => {
+    navigate('/mainform');
+  };
 
   useEffect(() => {
   const fetchUserData = async () => {
@@ -64,7 +76,7 @@ const Header = () => {
 
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: { target: any; }) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
@@ -110,9 +122,14 @@ const Header = () => {
       <header className="header">
         <div className="header-left">
           <div className="logo">
-            <img src={LogoIcon} alt="ItRun Logo" className="logo" />
+            <button onClick={handleTabClick}>
+            <img src={LogoIcon} alt="ItRun Logo" className="logo"/>
+            </button>
           </div>
-          <div className="logo-text">ItRun</div>
+          <div className="logo-text">
+            <button onClick={handleTabClick}/>
+            ItRun
+          </div>
           <nav className="menu">
             <div className="menu-item">Workspaces ▾</div>
             <div className="menu-item">Recent ▾</div>
@@ -135,9 +152,15 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <div className="logo">
-          <img src={LogoIcon} alt="ItRun Logo" className="logo" />
-        </div>
-        <div className="logo-text">ItRun</div>
+          <button className="header-menu-btn" onClick={handleTabClick}>
+          <img src={LogoIcon} alt="ItRun Logo" className="logo"/>
+          </button>
+          </div>
+          <div className="logo-text">
+            <button className="header-menu-btn" onClick={handleTabClick}>
+            ItRun
+            </button>
+          </div>
         <nav className="menu">
           <div className="menu-item">Workspaces ▾</div>
           <div className="menu-item">Recent ▾</div>

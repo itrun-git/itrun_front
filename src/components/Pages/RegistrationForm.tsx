@@ -16,11 +16,14 @@ interface FormData {
   photo?: FileList;
 }
 
-const getSchemaForStep = (step: number) => {
-  if (step === 1) return emailSchema;
-  if (step === 2) return passwordSchema;
-  if (step === 5) return emailSchema; 
-  return yup.object();
+const getResolver = (step: number) => {
+  if (step === 1 || step === 5) {
+    return yupResolver(emailSchema);
+  }
+  if (step === 2) {
+    return yupResolver(passwordSchema);
+  }
+  return undefined;
 };
 
 const RegistrationForm: React.FC = () => {
@@ -50,7 +53,7 @@ const RegistrationForm: React.FC = () => {
     setValue,
     watch
   } = useForm<FormData>({
-    resolver: yupResolver(getSchemaForStep(step)),
+    resolver: getResolver(step) as any,
     mode: "onChange",
   });
 

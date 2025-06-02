@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import Header from '../Compo/header';
 import UserWorkSpace from '../Compo/UserWorkSpace';
 import '../Style/MainFrom.css';
@@ -9,7 +10,8 @@ import leftarrow from "../Logo/leftarrow.png";
 import rightarrow from "../Logo/rightarrow.png";
 import timer from "../Logo/timer.png";
 import star from "../Logo/star.png";
-import starlight from "../Logo/starlight.png";  
+import starlight from "../Logo/starlight.png";
+import WorkspacePage from './WorkspaceFrom';
 
 const MainForm = () => {
   // Suggested templates
@@ -25,7 +27,14 @@ const MainForm = () => {
   const [recentIndex, setRecentIndex] = useState(0);
 
   const [showCentralBoard, setShowCentralBoard] = useState(true);
+  const [showWorkspaceBoard, setShowWorkspaceBoard] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+
+  //Навигация на воркспейс
+  const navigate = useNavigate();
+  const handleTabClick = () => {
+    navigate('/workspace');
+  };
 
   // Основные шаблоны (Suggested)
   const templates = [
@@ -66,8 +75,8 @@ const MainForm = () => {
 
   // Универсальный компонент секции с досками
   const BoardSection = ({
-    title,
     image,
+    title,
     boards,
     currentIndex,
     showAll,
@@ -76,8 +85,8 @@ const MainForm = () => {
     onRight,
     sectionKey,
   }: {
-    title: string;
     image?: string;
+    title: string;
     boards: any[];
     currentIndex: number;
     showAll: boolean;
@@ -90,10 +99,10 @@ const MainForm = () => {
     const canScroll = boards.length > 3;
 
     return (
-      <div className="board-section">
+      <div className="section">
         <div className="board-section-header">
-          <h2>{title}</h2>
-          {image && <img src={image} alt="section icon"/>}
+          {image && <img src={image} alt="section icon" className="board-section-image" />}
+          <h2 className="board-section-title">{title}</h2>
         </div>
         <div className="template-section">
           <div className={`template-scroll ${showAll ? 'expanded' : ''}`}>
@@ -108,21 +117,25 @@ const MainForm = () => {
           </div>
 
           {canScroll && (
-            <div className="controls-container">
-              {!showAll && (
-                <>
-                  <button className="arrow-btn" onClick={onLeft}>
-                    <img src={leftarrow} alt="Left Arrow" />
-                  </button>
-                  <button className="arrow-btn" onClick={onRight}>
-                    <img src={rightarrow} alt="Right Arrow" />
-                  </button>
-                </>
-              )}
+           <div className="controls-container">
+            <div className="left-block">
               <button className="show-all-btn" onClick={onToggleShowAll}>
-                {showAll ? 'Hide All' : 'Show All'}
+              {showAll ? 'Hide All' : 'Open all'}
               </button>
             </div>
+
+            {!showAll && (
+            <div className="center-buttons">
+              <button className="arrow-btn" onClick={onLeft}>
+              <img src={leftarrow} alt="Left Arrow" />
+              </button>
+              <button className="arrow-btn" onClick={onRight}>
+              <img src={rightarrow} alt="Right Arrow" />
+              </button>
+            </div>
+          )}
+          </div>
+
           )}
         </div>
       </div>
@@ -131,7 +144,14 @@ const MainForm = () => {
 
   const handleCloseBoard = () => setShowCentralBoard(false);
   const handleHiddenBoard = () => setShowCentralBoard(false);
-  const handleItRunClick = () => setShowCentralBoard(true);
+  const handleItRunClick = () => {
+    setShowCentralBoard(true);
+    setShowWorkspaceBoard(false);
+  };
+  const handleWorkspaceClick = () => {
+    setShowWorkspaceBoard(true);
+    setShowCentralBoard(false);
+  };
   const openTemplateWindow = (label?: string) => label && setSelectedTemplate(label);
   const closeTemplateWindow = () => setSelectedTemplate(null);
 
@@ -155,7 +175,7 @@ const MainForm = () => {
             </button>
           </div>
           <div className="workspace-block">
-            <UserWorkSpace />
+            <UserWorkSpace onWorkspaceClick={handleWorkspaceClick} />
           </div>
         </div>
 
@@ -172,7 +192,8 @@ const MainForm = () => {
               </div>
               <p className="subtext">Get going faster with a template from itRun community</p>
 
-              <BoardSection title=""
+              <BoardSection
+                title=""
                 boards={templates}
                 currentIndex={suggestedIndex}
                 showAll={suggestedShowAll}
@@ -184,8 +205,8 @@ const MainForm = () => {
             </div>
 
             {/* Starred Boards */}
-            <BoardSection title="Starred boards" 
-              image= {star}
+            <BoardSection image={star}
+              title="Starred boards"
               boards={starredBoards}
               currentIndex={starredIndex}
               showAll={starredShowAll}
@@ -196,8 +217,9 @@ const MainForm = () => {
             />
 
             {/* Recently Viewed */}
-            <BoardSection title=" Recently viewed"
-              image= {timer}
+            <BoardSection
+              title="Recently viewed"
+              image={timer}
               boards={recentBoards}
               currentIndex={recentIndex}
               showAll={recentShowAll}
@@ -210,6 +232,42 @@ const MainForm = () => {
             <div className="bottom-controls">
               <button className="control-btn" onClick={handleCloseBoard}>Closed boards</button>
               <button className="control-btn" onClick={handleHiddenBoard}>Hidden boards</button>
+            </div>
+          </div>
+        )}
+
+        {/* Workspace Board */}
+        {showWorkspaceBoard && (
+          <div className="central-side">
+            <div className="workspace-board">
+              <div className="header-row">
+                <div className="header-left">
+                  <span className="workspace-avatar">VL</span>
+                  <span className='userworkboard'>Vlad's workspace</span>
+                </div>
+              
+                <div className="workspace-tabs">
+                  <button className="tab-btn" onClick={handleTabClick}>Boards</button>
+                  <button className="tab-btn" onClick={handleTabClick}>Views</button>
+                  <button className="tab-btn" onClick={handleTabClick}>Members</button>
+                  <button className="tab-btn" onClick={handleTabClick}>Settings</button>
+                </div>
+              </div>
+              <div className="workspace-content">
+                <div className="board-item starred">
+                  <div className="board-preview basic-board">
+                    <span className="star-icon"><img src={starlight}></img></span>
+                  </div>
+                  <span className="board-name">Basic Board</span>
+                </div>
+                
+                <div className="board-item create-new">
+                  <div className="board-preview create-board">
+                    <span className="plus-icon">+</span>
+                  </div>
+                  <span className="board-name">Create new board</span>
+                </div>
+              </div>
             </div>
           </div>
         )}
