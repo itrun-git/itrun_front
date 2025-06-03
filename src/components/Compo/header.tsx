@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '../Style/HeaderMenu.css';
 import LogoIcon from "../Logo/LogoIcon.png";
 import { getUserFullName, getUserEmail, getUserAvatar, logoutUser } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
-import MainForm from '../Pages/MainForm';
 
 const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

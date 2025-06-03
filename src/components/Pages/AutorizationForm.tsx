@@ -3,8 +3,6 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate, Link } from "react-router-dom";
 
-import * as yup from "yup";
-
 import "../Style/AutorizationForm.css";
 import LogoIcon from "../Logo/LogoIcon.png";
 import Logoapple from "../Logo/Logoapple.png";

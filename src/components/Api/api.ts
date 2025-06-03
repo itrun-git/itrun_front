@@ -304,7 +304,7 @@ export async function logoutUser(token: string): Promise<{ message: string }> {
 }
 
 //Обновление почты
-export async function updateEmail(userId: string, email: string) {
+export async function updateEmail(email: string) {
   const response = await fetch(`${API_URL}/auth/update-email`, {
     method: 'PATCH',
     headers: {
