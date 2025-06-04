@@ -11,7 +11,6 @@ import rightarrow from "../Logo/rightarrow.png";
 import timer from "../Logo/timer.png";
 import star from "../Logo/star.png";
 import starlight from "../Logo/starlight.png";
-import WorkspacePage from './WorkspaceFrom';
 
 const MainForm = () => {
   // Suggested templates
@@ -152,7 +151,7 @@ const MainForm = () => {
     setShowWorkspaceBoard(true);
     setShowCentralBoard(false);
   };
-  const openTemplateWindow = (label?: string) => label && setSelectedTemplate(label);
+  //const openTemplateWindow = (label?: string) => label && setSelectedTemplate(label);
   const closeTemplateWindow = () => setSelectedTemplate(null);
 
   return (

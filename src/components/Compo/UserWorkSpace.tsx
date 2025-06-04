@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // Тип описывает структуру объекта рабочего пространства
 type Workspace = {

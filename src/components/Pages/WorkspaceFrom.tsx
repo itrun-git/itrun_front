@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "../Compo/header";
 import "../Style/WorkSpace.css";
 import WorkSpaceLeftBoard from "../Compo/WorkSpaceLeftBoard";
@@ -8,12 +7,11 @@ import leftarrow from "../Logo/leftarrow.png";
 import rightarrow from "../Logo/rightarrow.png";
 import pen from "../Logo/pen.png";
 import member from "../Logo/member.png";
-import MainForm from "./MainForm";
 
-type Workspace = {
+/*type Workspace = {
   id: number;
   avatar: string;
-};
+};*/
 
 type Template = {
   className: string;
@@ -28,7 +26,7 @@ const WorkspacePage = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("boards");
 
-  const userWorkspaces: Workspace[] = [{ id: 1, avatar: "VL" }];
+  //const userWorkspaces: Workspace[] = [{ id: 1, avatar: "VL" }];
 
   const templates: Template[] = [
     { className: "green", label: "Basic Board" },
@@ -45,20 +43,20 @@ const WorkspacePage = () => {
     { className: "green", label: "Basic Board", hasIcon: true },
   ];
 
-  const bottomBoards1: Template[] = [
+  /*const bottomBoards1: Template[] = [
     { className: "gray", label: "Marketing board" },
     { className: "pink", label: "Design Sprint" },
     { className: "teal", label: "Content Plan" },
     { className: "orange", label: "Roadmap" },
     { className: "lime", label: "Sprint Goals" },
-  ];
+  ];*/
 
-  const bottomBoards2: Template[] = [
+  /*const bottomBoards2: Template[] = [
     { className: "aqua", label: "Bug Tracker" },
     { className: "brown", label: "Hiring Plan" },
     { className: "cyan", label: "Product Dev" },
     { className: "gold", label: "User Research" },
-  ];
+  ];*/
 
   const scrollByArrow = (
     direction: number,
