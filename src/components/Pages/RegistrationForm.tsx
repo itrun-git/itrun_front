@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import "../Style/RegistrationForm.css";
 import LogoIcon from "../Logo/LogoIcon.png";
 import CameraIcon from "../Logo/camera.png";
@@ -38,7 +37,7 @@ const RegistrationForm: React.FC = () => {
   
   // Новые состояния для 5-й формы
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
-  const [isEmailSent, setIsEmailSent] = useState(false);
+  const [, setIsEmailSent] = useState(false);
   const [timer, setTimer] = useState(0);
   const [showChangeEmail, setShowChangeEmail] = useState(false);
   const [newEmail, setNewEmail] = useState("");
@@ -51,7 +50,6 @@ const RegistrationForm: React.FC = () => {
     formState: { errors },
     getValues,
     setValue,
-    watch
   } = useForm<FormData>({
     resolver: getResolver(step) as any,
     mode: "onChange",
