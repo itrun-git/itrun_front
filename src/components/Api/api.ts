@@ -1,4 +1,4 @@
-const API_URL = 'http://db:3002/api';
+const API_URL = 'http://147.135.210.93:3002/api';
 
 export enum UserPurpose {
   PERSONAL = 'personal',
