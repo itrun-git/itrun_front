@@ -12,6 +12,13 @@
   gap: 40px; 
 }
 
+/* Левая часть заголовка с иконкой и текстом */
+.header-navbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .header-left,
 .header-right {
   display: flex;
@@ -44,8 +51,9 @@
 
 .menu-item {
   cursor: pointer;
-  font-size: 14px;
+  /* font-size: 14px; */
   white-space: nowrap;
+  margin-left: 20px;
 }
 
 .create-btn {
@@ -67,6 +75,16 @@
 .icon {
   font-size: 18px;
   cursor: pointer;
+}
+
+.workspace-private-header-menu{
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.zamok-icon{
+  margin-top: 5px;
 }
 
 .avatar {
@@ -222,4 +240,14 @@
 .logo-text .header-menu-btn {
   font-size: inherit;
   color: inherit;
+}
+
+.headericon {
+  background-color: transparent;
+  padding: 6px;
+  border-radius: 50%;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

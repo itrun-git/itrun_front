@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "../Compo/header";
 import "../Style/WorkSpace.css";
 import WorkSpaceLeftBoard from "../Compo/WorkSpaceLeftBoard";
@@ -7,8 +6,8 @@ import LogoIcon from "../Logo/LogoIcon.png";
 import leftarrow from "../Logo/leftarrow.png";
 import rightarrow from "../Logo/rightarrow.png";
 import pen from "../Logo/pen.png";
-import member from "../Logo/member.png";
-import MainForm from "./MainForm";
+import blackmember from "../Logo/blackmember.png";
+import zamok from "../Logo/zamok.png"
 
 type Workspace = {
   id: number;
@@ -27,6 +26,7 @@ const WorkspacePage = () => {
   const [suggestedIndex, setSuggestedIndex] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("boards");
+  const [activeMemberTab, setActiveMemberTab] = useState("workspace");
 
   const userWorkspaces: Workspace[] = [{ id: 1, avatar: "VL" }];
 
@@ -109,8 +109,7 @@ const WorkspacePage = () => {
                 className={`template-card ${board.className} ${
                   !showAll && index === 3 ? "faded" : ""
                 } ${board.isCreateNew ? "create-new-card" : ""}`}
-                onClick={() => board.isCreateNew ? createNewBoard() : openTemplateWindow(board.label)}
-              >
+                onClick={() => board.isCreateNew ? createNewBoard() : openTemplateWindow(board.label)}>
                 <div className="card-content">
                   {board.label || "Board"}
                   {board.hasIcon && <span className="star-icon">⭐</span>}
@@ -165,36 +164,13 @@ const WorkspacePage = () => {
             <h2>Suggested templates</h2>
           </div>
         </div>
-        <p className="subtext">
-          Get going faster with a template from itRun community
-        </p>
-
-        <BoardSection
-          title=""
-          boards={templates}
-          currentIndex={suggestedIndex}
-          showAll={suggestedShowAll}
-          onToggleShowAll={() =>
-            setSuggestedShowAll(!suggestedShowAll)
-          }
-          onLeft={() =>
-            scrollByArrow(
-              -1,
-              suggestedIndex,
-              setSuggestedIndex,
-              templates.length
-            )
-          }
-          onRight={() =>
-            scrollByArrow(
-              1,
-              suggestedIndex,
-              setSuggestedIndex,
-              templates.length
-            )
-          }
-          sectionKey="suggested"
-        />
+        <p className="subtext">Get going faster with a template from itRun community</p>
+          
+        <BoardSection title="" boards={templates} currentIndex={suggestedIndex} showAll={suggestedShowAll}
+          onToggleShowAll={() => setSuggestedShowAll(!suggestedShowAll)}
+          onLeft={() => scrollByArrow(-1, suggestedIndex, setSuggestedIndex, templates.length)}
+          onRight={() => scrollByArrow( 1, suggestedIndex, setSuggestedIndex, templates.length)}
+          sectionKey="suggested"/>
       </div>
 
       <div className="recent-boards-section">
@@ -204,11 +180,7 @@ const WorkspacePage = () => {
             <option>Alphabetical</option>
             <option>Recently created</option>
           </select>
-          <input 
-            type="text" 
-            placeholder="Search" 
-            className="search-input"
-          />
+          <input type="text" placeholder="Search" className="search-input"/>
         </div>
 
         <BoardSection
@@ -220,65 +192,85 @@ const WorkspacePage = () => {
           onLeft={() => {}}
           onRight={() => {}}
           sectionKey="recent"
-          isRecent={true}
-        />
+          isRecent={true}/>
       </div>
     </>
   );
 
   const renderMembersContent = () => (
     <div className="members-view">
-      <h2>Workspace Members</h2>
-      <div className="members-list">
-        <div className="member-item">
-          <div className="member-avatar">VH</div>
-          <div className="member-info">
-            <div className="member-name">Vlad Holubov</div>
-            <div className="member-role">Admin</div>
-          </div>
+      <h2>Collaborators</h2>
+      <div className="collab-layout">
+        <div className="navbar-colabolators-btn">
+          <button className={`nvb-cln-btn ${activeMemberTab === "workspace" ? "active" : ""}`} onClick={() => setActiveMemberTab("workspace")}>Workspace members</button>
+          <button className={`nvb-cln-btn ${activeMemberTab === "guest" ? "active" : ""}`} onClick={() => setActiveMemberTab("guest")}>Guest</button>
+          <button className={`nvb-cln-btn ${activeMemberTab === "requests" ? "active" : ""}`} onClick={() => setActiveMemberTab("requests")}>Join request</button>
+        </div>
+        <div className="workspace-members-colabolators">
+          {activeMemberTab === "workspace" && (
+            <>
+              <h2>Workspace members</h2>
+              <h3 className="und-workspace">workspace</h3>
+              <h2>Workspace members</h2>
+              <h3 className="und-workspace">workspace</h3>
+              <div className="und-input-workspace">
+                <input placeholder="Filter by name" />
+                <h3 className="Disablelink">Disable invite link</h3>
+                <button className="invited-link-btn-workspace-members">invite with link</button>
+              </div>
+            </>
+          )}
+          {activeMemberTab === "guest" && (
+            <>
+              <h2>Guest users</h2>
+              <p>Guests can only view and edit the boards to which they’ve been added.</p>
+            </>
+          )}
+          {activeMemberTab === "requests" && (
+            <>
+              <h2>Join Requests</h2>
+              <p>These people have requested to join this Workspace. Adding new Workspace members will automatically update your bill. Workspace guests already count toward the free Workspace collaborator limit</p>
+              <div className="und-input-workspace">
+                <input placeholder="Filter by name" />
+                <h3 className="Disablelink">Disable invite link</h3>
+                <button className="invited-link-btn-workspace-members">invite with link</button>
+              </div>
+              <div className="request-header-controls">
+                  <label className="select-all-label">
+                  <input type="radio" name="selectALL"/>Selec All
+                </label>
+                <div className="request-btn">
+                 <button className="accept-btn">Accept</button>
+                  <button className="decline-btn">Decline</button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
-      <button className="invite-member-btn">
-        <img src={member} alt="Add Member" /> Invite Members
-      </button>
     </div>
   );
 
   const renderSettingsContent = () => (
-    <div className="settings-view">
-      <h2>Workspace Settings</h2>
-      <div className="settings-section">
-        <h3>General</h3>
-        <div className="setting-item">
-          <label>Workspace Name</label>
-          <input type="text" defaultValue="Vlad's workspace" />
-        </div>
-        <div className="setting-item">
-          <label>Workspace Visibility</label>
-          <select>
-            <option>Private</option>
-            <option>Team</option>
-            <option>Public</option>
-          </select>
-        </div>
+  <div className="settings-view">
+    <hr className="settings-divider" />
+
+    <div className="workspace-settings-block">
+      <h2>Workspace settings</h2>
+      <h3 className="und-workspace">Workspace visibility</h3>
+
+      <div className="workspace-visibility-section">
+        <p className="visibility-text">
+          <img src={zamok}/> <b>Private</b> – This Workspace is private. It’s not indexed or visible to those outside the Workspace.
+        </p>
+        <button className="change-btn">Change</button>
       </div>
-      <div className="settings-section">
-        <h3>Permissions</h3>
-        <div className="setting-item">
-          <label>
-            <input type="checkbox" defaultChecked />
-            Allow members to create boards
-          </label>
-        </div>
-        <div className="setting-item">
-          <label>
-            <input type="checkbox" />
-            Allow external guests
-          </label>
-        </div>
-      </div>
+
+      <p className="delete-workspace">Delete this Workspace?</p>
     </div>
-  );
+  </div>
+);
+
 
   const renderViewsContent = () => (
     <div className="views-section">
@@ -325,24 +317,21 @@ const WorkspacePage = () => {
         <Header />
         <div className="main-contentboard">
           <div className="workspacepage">
-            <WorkSpaceLeftBoard 
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
+            <WorkSpaceLeftBoard activeTab={activeTab} setActiveTab={setActiveTab}/>
             <div className="central-sideboard">
-              <div className="workspace-header">
-                <div className="workspace-icon-placeholder">VH</div>
+              <div className="workspace-header-place">
+                <div className="workspace-icon-card-board">VH</div>
                 <div className="workspace-name-private">
                   <div className="workspace-name-leftbar">
                     Vlad's workspace
                     <img src={pen} alt="Edit" className="pen-icon" />
                   </div>
-                  <div className="workspace-private">
-                    <img src={pen} className="pen-icon" /> Private
+                  <div className="workspace-private-header-menu">
+                    <img src={zamok} className="zamok-icon"/> Private
                   </div>
                 </div>
                 <button className="invite-button">
-                  <img src={member} className="pen-icon" /> Members
+                  <img src={blackmember} className="pen-icon" />Invite Members
                 </button>
               </div>
 
@@ -358,9 +347,7 @@ const WorkspacePage = () => {
                     ✕
                   </span>
                   <h2>{selectedTemplate}</h2>
-                  <p>
-                    This is a detailed description for the selected template.
-                  </p>
+                  <p>This is a detailed description for the selected template.</p>
                 </div>
               </div>
             )}

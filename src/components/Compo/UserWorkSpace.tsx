@@ -1,68 +1,138 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Modalwindow from './addWorkspace';
+import { getUserWorkspace } from '../Api/api';
+import '../Style/addworkspace.css';
 
 // Тип описывает структуру объекта рабочего пространства
 type Workspace = {
-  id: number;
+  id: string;
   name: string;
-  avatar: string;
+  imageUrl?: string;
+  visibility: 'public' | 'private';
+  createdAt: string;
+  updatedAt: string;
 };
 
 // Тип пропсов для компонента, включает функцию-обработчик клика по рабочему пространству
 type Props = {
-  onWorkspaceClick: (workspace: Workspace) => void;
+  onWorkspaceClick: ( data: { name: string; imageUrl?: string }) => void;
 };
 
 // Компонент отображает список рабочих пространств пользователя и гостевых пространств
-const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick }) => {
-  // Статически определённые рабочие пространства пользователя
-  const userWorkspaces: Workspace[] = [
-    { id: 1, name: "Vlad's workspace", avatar: "VL" },
-    { id: 2, name: "Vlad's workspace", avatar: "VL" },
-    { id: 3, name: "Vlad's workspace", avatar: "VL" }
-  ];
+const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
+  const [showModal, setShowModal] = useState(false);
+  const [userWorkspaces, setUserWorkspaces] = useState<Workspace[]>([]);
+  const [guestWorkspaces, setGuestWorkspaces] = useState<Workspace[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Статически определённые гостевые рабочие пространства
-  const guestWorkspaces: Workspace[] = [
-    { id: 4, name: "Vlad's guest", avatar: "VL" },
-    { id: 5, name: "Vlad's guest", avatar: "VL" }
-  ];
+  // Получаем токен из localStorage
+  const token = localStorage.getItem("authToken");
+
+  // Загружаем рабочие пространства при монтировании компонента
+  useEffect(() => {
+    const loadWorkspaces = async () => {
+      try {
+        setLoading(true);
+        const workspaces = await getUserWorkspace();
+        
+        // Разделяем на пользовательские и гостевые (пока что все в пользовательские)
+        // Позже можно добавить логику разделения на основе роли пользователя
+        setUserWorkspaces(workspaces);
+        setGuestWorkspaces([]); // Пока что пустой массив
+        
+        setError(null);
+      } catch (err) {
+        console.error('Error loading workspaces:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load workspaces');
+        setUserWorkspaces([]);
+        setGuestWorkspaces([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadWorkspaces();
+  }, []);
+
+  // Функция для получения аватара из имени
+  const getWorkspaceAvatar = (name: string): string => {
+    const words = name.split(' ');
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  // Обработчик закрытия модального окна с обновлением списка
+  const handleModalClose = async () => {
+    setShowModal(false);
+    // Перезагружаем список workspace после создания нового
+    try {
+      const workspaces = await getUserWorkspace();
+      setUserWorkspaces(workspaces);
+    } catch (err) {
+      console.error('Error reloading workspaces:', err);
+    }
+  };
 
   return (
     <div className="workspace-container">
       <div className="workspace-section">
-        <h3 className="section-title">YOUR WORKSPACES</h3>
+        <div className='workspace-section-title'>
+          <h3 className="section-title">YOUR WORKSPACES</h3>
+          <button className="plus-icon-for-modalwin" onClick={() => setShowModal(true)}>+</button>
+        </div>
         <div className="workspace-list">
-          {/* Отображаем каждое пользовательское пространство как кнопку */}
-          {userWorkspaces.map((workspace) => (
-            <button
-              key={workspace.id} 
-              className="workspace-item" 
-              onClick={() => onWorkspaceClick(workspace)} // обработка клика
-            >
-              <div className="workspace-avatar">{workspace.avatar}</div>
-              <span className="workspace-name">{workspace.name}</span>
-            </button>
-          ))}
+          {userWorkspaces.length === 0 ? (
+            <div className="no-workspaces">
+              <p>No workspaces found. Create your first workspace!</p>
+            </div>
+          ) : (
+            userWorkspaces.map((workspace) => (
+              <button
+                key={workspace.id} 
+                className="workspace-item" 
+                onClick={() => onWorkspaceClick({name: workspace.name, imageUrl: workspace.imageUrl })}>
+                <div className="workspace-avatar">
+                  {workspace.imageUrl ? (
+                    <img src={workspace.imageUrl} alt={workspace.name} />
+                  ) : (
+                    getWorkspaceAvatar(workspace.name)
+                  )}
+                </div>
+                <span className="workspace-name">{workspace.name}</span>
+              </button>
+            ))
+          )}
         </div>
       </div>
 
       {/* Секция гостевых рабочих пространств */}
-      <div className="workspace-section">
-        <h3 className="section-title">GUEST WORKSPACES</h3>
-        <div className="workspace-list">
-          {/* Отображаем каждое гостевое пространство как кнопку */}
-          {guestWorkspaces.map((workspace) => (
-            <button
-              key={workspace.id}
-              className="workspace-item"
-              onClick={() => onWorkspaceClick(workspace)}
-            >
-              <div className="workspace-avatar">{workspace.avatar}</div>
-              <span className="workspace-name">{workspace.name}</span>
-            </button>
-          ))}
+      {guestWorkspaces.length > 0 && (
+        <div className="workspace-section">
+          <h3 className="section-title">GUEST WORKSPACES</h3>
+          <div className="workspace-list">
+            {guestWorkspaces.map((workspace) => (
+              <button key={workspace.id} className="workspace-item"
+              onClick={() => onWorkspaceClick({ name: workspace.name, imageUrl: workspace.imageUrl })}>
+                <div className="workspace-avatar">
+                  {workspace.imageUrl ? (
+                    <img src={workspace.imageUrl} alt={workspace.name} />
+                  ) : (
+                    getWorkspaceAvatar(workspace.name)
+                  )}
+                </div>
+                <span className="workspace-name">{workspace.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
+
+      {showModal && (
+        <Modalwindow onClose={handleModalClose} token={token || ''} /> //closedBy="none" (попытка реализации клика вне рамки модального окна)
+      )}
     </div>
   );
 };

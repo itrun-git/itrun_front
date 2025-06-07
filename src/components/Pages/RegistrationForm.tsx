@@ -58,24 +58,19 @@ const RegistrationForm: React.FC = () => {
   });
 
   // Таймер для кнопки отправки email
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (timer > 0) {
-      interval = setInterval(() => {
-        setTimer(timer - 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [timer]);
+ const interval = setInterval(() => {
+  setTimer(timer - 1);
+  }, 1000);
+
 
   // Функция для проверки размера файла
   const validateFile = (file: File): string | null => {
     const MAX_SIZE = 5 * 1024 * 1024; // 5MB
     if (file.size > MAX_SIZE) {
-      return 'Размер файла не должен превышать 5MB';
+      return 'The file size must not exceed 5 MB.';
     }
     if (!file.type.startsWith('image/')) {
-      return 'Можно загружать только изображения';
+      return 'Only images can be uploaded';
     }
     return null;
   };
@@ -102,7 +97,7 @@ const RegistrationForm: React.FC = () => {
       // Создаем превью
       setPhotoPreview(URL.createObjectURL(file));
     } catch (error) {
-      setPhotoError('Ошибка при обработке файла');
+      setPhotoError('Error processing file');
       console.error('Photo upload error:', error);
     }
   };
@@ -111,10 +106,10 @@ const RegistrationForm: React.FC = () => {
   const uploadPhotoToServer = async (file: File, userId: string): Promise<void> => {
     try {
       const user = await uploadAvatar(file, userId);
-      console.log('Avatar uploaded successfully:', user);
+      console.log('Аватар успешно загружен:', user);
     } catch (error) {
       console.error('Failed to upload avatar:', error);
-      throw new Error('Не удалось загрузить фото');
+      throw new Error('Failed to upload photo');
     }
   };
 
@@ -132,9 +127,9 @@ const RegistrationForm: React.FC = () => {
       await sendVerificationEmail(userIdToUse);
       setIsEmailSent(true);
       setTimer(60); // 1 минута
-      console.log('Письмо подтверждения отправлено');
+      console.log('Подтверждение отправлено по электронной почте');
     } catch (err: any) {
-      setError(err.message || 'Ошибка при отправке письма');
+      setError(err.message || 'Error sending email');
     } finally {
       setLoading(false);
     }
@@ -146,20 +141,16 @@ const RegistrationForm: React.FC = () => {
       setLoading(true);
       setError(null);
 
-    // Проверяем доступность нового email
     const emailCheck = await checkEmail(newEmail);
     if (!emailCheck.available) {
-      setError("Этот email уже используется");
+      setError("This email is already in use");
       return;
     }
 
-    // Получаем текущий email из формы
     const currentEmail = getValues("email");
     
-    // Вызываем API с правильными параметрами
     await changeUserEmail(currentEmail, newEmail);
 
-    // Обновляем email в форме
     setValue("email", newEmail);
     setShowChangeEmail(false);
     setIsEmailSent(false);
@@ -167,10 +158,9 @@ const RegistrationForm: React.FC = () => {
 
     console.log('Email изменен и обновлен на сервере:', newEmail);
 
-    // Отправляем письмо подтверждения на новый email
     await handleSendVerificationEmail();
     } catch (err: any) {
-      setError(err.message || 'Ошибка при смене email');
+      setError(err.message || 'Error when changing email');
     } finally {
       setLoading(false);
     }
@@ -186,7 +176,7 @@ const RegistrationForm: React.FC = () => {
         try {
           const emailCheck = await checkEmail(data.email);
           if (!emailCheck.available) {
-            setError("Этот email уже используется");
+            setError("This email is already in use");
             setLoading(false);
             return;
           }
@@ -230,7 +220,7 @@ const RegistrationForm: React.FC = () => {
             });
             console.log('Purpose установлен успешно');
           } catch (purposeError) {
-            console.warn('Ошибка при установке purpose:', purposeError);
+            console.warn('Error installing purpose:', purposeError);
           }
         }
 
@@ -243,7 +233,7 @@ const RegistrationForm: React.FC = () => {
           } catch (photoUploadError) {
             console.error('Ошибка загрузки фото:', photoUploadError);
             // Не прерываем регистрацию из-за ошибки фото, просто логируем
-            setError('Регистрация завершена, но фото не удалось загрузить');
+            setError('Registration completed, but photo failed to upload');
           }
         }
 
@@ -263,7 +253,7 @@ const RegistrationForm: React.FC = () => {
 
     } catch (err: any) {
       console.error('Registration error:', err);
-      setError(err.message || "Произошла ошибка регистрации");
+      setError(err.message || "There was a registration error");
     } finally {
       setLoading(false);
     }

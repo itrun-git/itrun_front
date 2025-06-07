@@ -3,8 +3,9 @@ import '../Style/HeaderMenu.css';
 import LogoIcon from "../Logo/LogoIcon.png";
 import { getUserFullName, getUserEmail, getUserAvatar, logoutUser } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
-import MainForm from '../Pages/MainForm';
-
+import vopsor from '../Logo/vopsor.png';
+import bell from "../Logo/bell.png";
+import loopa from "../Logo/loopa.png";
 const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [userData, setUserData] = useState<{
@@ -116,38 +117,6 @@ const Header = () => {
     window.location.href = '/settings';
     setIsUserMenuOpen(false);
   };
-
-  if (loading) {
-    return (
-      <header className="header">
-        <div className="header-left">
-          <div className="logo">
-            <button onClick={handleTabClick}>
-            <img src={LogoIcon} alt="ItRun Logo" className="logo"/>
-            </button>
-          </div>
-          <div className="logo-text">
-            <button onClick={handleTabClick}/>
-            ItRun
-          </div>
-          <nav className="menu">
-            <div className="menu-item">Workspaces ▾</div>
-            <div className="menu-item">Recent ▾</div>
-            <div className="menu-item">Starred ▾</div>
-            <div className="menu-item">Templates ▾</div>
-          </nav>
-        </div>
-        <div className="header-right">
-          <button className="create-btn">Create</button>
-          <input type="text" placeholder="Search" className="search" />
-          <span className="icon">🔔</span>
-          <span className="icon">❓</span>
-          <div className="avatar-fallback">...</div>
-        </div>
-      </header>
-    );
-  }
-
   return (
     <header className="header">
       <div className="header-left">
@@ -170,16 +139,13 @@ const Header = () => {
       </div>
 
       <div className="header-right">
-        <button className="create-btn">Create</button>
+        {/* <button className="create-btn">Create</button> */}
         <input type="text" placeholder="Search" className="search" />
-        <span className="icon">🔔</span>
-        <span className="icon">❓</span>
-
-        <div
-          className="user-avatar-container"
-          onClick={() => setIsUserMenuOpen(prev => !prev)}
-          ref={menuRef}
-        >
+        <span className="headericon "><img src={bell}/></span>
+        <span className="headericon "><img src={vopsor}/></span>
+        <div className="user-avatar-container" onClick={() => 
+          setIsUserMenuOpen(prev => !prev)}
+          ref={menuRef}>
           {userData.avatar ? (
             <img src={userData.avatar} alt="Avatar" className="avatar-img" />
           ) : (

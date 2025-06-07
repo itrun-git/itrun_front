@@ -39,10 +39,10 @@ const AutorizationForm: React.FC = () => {
         alert(response.message);
         navigate("/mainform");
       } else {
-        alert("Ошибка при авторизации: " + (response.message || "Неизвестная ошибка"));
+        alert("Authorization error: " + (response.message || "Unknown error"));
       }
     } catch (error: any) {
-      alert("Ошибка при логине: " + error.message);
+      alert("Error while logging in: " + error.message);
     }
   };
 

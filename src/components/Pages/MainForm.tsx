@@ -11,7 +11,10 @@ import rightarrow from "../Logo/rightarrow.png";
 import timer from "../Logo/timer.png";
 import star from "../Logo/star.png";
 import starlight from "../Logo/starlight.png";
-import WorkspacePage from './WorkspaceFrom';
+import settings from "../Logo/settings.png";
+import spisok from "../Logo/spisok.png";
+import member from "../Logo/member.png";
+import board from "../Logo/board.png";
 
 const MainForm = () => {
   // Suggested templates
@@ -29,6 +32,9 @@ const MainForm = () => {
   const [showCentralBoard, setShowCentralBoard] = useState(true);
   const [showWorkspaceBoard, setShowWorkspaceBoard] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+
+  const [selectedWorkspaceName, setSelectedWorkspaceName] = useState<string>('My Workspace');
+  const [selectedWorkspaceImage, setSelectedWorkspaceImage] = useState<string | undefined>(undefined);
 
   //Навигация на воркспейс
   const navigate = useNavigate();
@@ -48,13 +54,13 @@ const MainForm = () => {
   ];
 
   // Избранные доски
-  const starredBoards = [
-    { className: 'purple', label: 'Marketing' },
-    { className: 'olive', label: 'DevOps' },
-    { className: 'darkblue', label: 'Design' },
-    // { className: 'blue', label: 'Sales' },
-    // { className: 'green', label: 'Team Sync' },
-  ];
+  const [starredBoards, setStarredBoard ]= useState([
+    { className: 'purple', label: 'Marketing', isStarred: true },
+    { className: 'olive', label: 'DevOps', isStarred: true },
+    { className: 'darkblue', label: 'Design', isStarred: true },
+    // { className: 'blue', label: 'Sales', isStarred: true },
+    // { className: 'green', label: 'Team Sync', isStarred: true },
+  ]);
 
   // Недавние доски
   const recentBoards = [
@@ -71,6 +77,20 @@ const MainForm = () => {
     if (newIndex >= 0 && newIndex <= listLength - 4) {
       setter(newIndex);
     }
+  };
+
+  // выбор избранного шаблона
+  const toggleStarred = (index: number) => {
+    setStarredBoard (prev => prev.map((board, i) =>
+    i === index ? {...board, isStarred: !board.isStarred} : board));
+  };
+
+  const getWorkspaceInitials = (name: string): string => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
   };
 
   // Универсальный компонент секции с досками
@@ -109,9 +129,14 @@ const MainForm = () => {
             {visibleBoards.map((board, index) => (
               <div
                 className={`template-card ${board.className} ${!showAll && index === 3 ? 'faded' : ''}`}
-                key={`${sectionKey}-${index}`}
-              >
-                {board.label || 'Board'}
+                key={`${sectionKey}-${index}`}>
+                  <div className='card-content-template'>
+                    {board.label || 'Board'}
+                    {sectionKey === 'starred' && (<img src={board.isStarred ? star : starlight}
+                    alt = "star"
+                    className='star-icon-content'
+                    onClick={() => toggleStarred(currentIndex + index)}/>)}
+                  </div>
               </div>
             ))}
           </div>
@@ -175,7 +200,7 @@ const MainForm = () => {
             </button>
           </div>
           <div className="workspace-block">
-            <UserWorkSpace onWorkspaceClick={handleWorkspaceClick} />
+            <UserWorkSpace onWorkspaceClick={(data) => { handleWorkspaceClick(); setSelectedWorkspaceName(data.name); setSelectedWorkspaceImage(data.imageUrl); }} />
           </div>
         </div>
 
@@ -200,8 +225,7 @@ const MainForm = () => {
                 onToggleShowAll={() => setSuggestedShowAll(!suggestedShowAll)}
                 onLeft={() => scrollByArrow(-1, suggestedIndex, setSuggestedIndex, templates.length)}
                 onRight={() => scrollByArrow(1, suggestedIndex, setSuggestedIndex, templates.length)}
-                sectionKey="suggested"
-              />
+                sectionKey="suggested"/>
             </div>
 
             {/* Starred Boards */}
@@ -213,8 +237,7 @@ const MainForm = () => {
               onToggleShowAll={() => setStarredShowAll(!starredShowAll)}
               onLeft={() => scrollByArrow(-1, starredIndex, setStarredIndex, starredBoards.length)}
               onRight={() => scrollByArrow(1, starredIndex, setStarredIndex, starredBoards.length)}
-              sectionKey="starred"
-            />
+              sectionKey="starred"/>
 
             {/* Recently Viewed */}
             <BoardSection
@@ -226,9 +249,8 @@ const MainForm = () => {
               onToggleShowAll={() => setRecentShowAll(!recentShowAll)}
               onLeft={() => scrollByArrow(-1, recentIndex, setRecentIndex, recentBoards.length)}
               onRight={() => scrollByArrow(1, recentIndex, setRecentIndex, recentBoards.length)}
-              sectionKey="recent"
-            />
-
+              sectionKey="recent"/>
+           
             <div className="bottom-controls">
               <button className="control-btn" onClick={handleCloseBoard}>Closed boards</button>
               <button className="control-btn" onClick={handleHiddenBoard}>Hidden boards</button>
@@ -242,25 +264,57 @@ const MainForm = () => {
             <div className="workspace-board">
               <div className="header-row">
                 <div className="header-left">
-                  <span className="workspace-avatar">VL</span>
-                  <span className='userworkboard'>Vlad's workspace</span>
+                  {selectedWorkspaceImage ? (
+                    <img src={selectedWorkspaceImage} alt="Workspace Avatar" className="workspace-avatar-board workspace-avatar-image"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                  ) : (
+                    <span className="workspace-avatar-board">
+                      {getWorkspaceInitials(selectedWorkspaceName)}
+                    </span>
+                  )}
+                  <span className='userworkboard'>{selectedWorkspaceName}</span>
                 </div>
-              
+
                 <div className="workspace-tabs">
-                  <button className="tab-btn" onClick={handleTabClick}>Boards</button>
-                  <button className="tab-btn" onClick={handleTabClick}>Views</button>
-                  <button className="tab-btn" onClick={handleTabClick}>Members</button>
-                  <button className="tab-btn" onClick={handleTabClick}>Settings</button>
+                  <button className="tab-btn-wsp" onClick={handleTabClick}>
+                    <span className='btn-logo-gap'>
+                      <img src={board} className='btn-logo-wsp' alt="Boards" />
+                    </span>
+                    Boards
+                  </button>
+                  <button className="tab-btn-wsp" onClick={handleTabClick}>
+                    <span className='btn-logo-gap'>
+                      <img src={spisok} className='btn-logo-wsp' alt="Views" />
+                    </span>
+                    Views
+                  </button>
+                  <button className="tab-btn-wsp" onClick={handleTabClick}>
+                    <span className='btn-logo-gap'>
+                      <img src={member} className='btn-logo-wsp' alt="Members" />
+                    </span>
+                    Members
+                  </button>
+                  <button className="tab-btn-wsp" onClick={handleTabClick}>
+                    <span className='btn-logo-gap'>
+                      <img src={settings} className='btn-logo-wsp' alt="Settings" />
+                    </span>
+                    Settings
+                  </button>
                 </div>
               </div>
               <div className="workspace-content">
                 <div className="board-item starred">
                   <div className="board-preview basic-board">
-                    <span className="star-icon"><img src={starlight}></img></span>
+                    <span className="star-icon"><img src={starlight} alt="Star" /></span>
                   </div>
                   <span className="board-name">Basic Board</span>
                 </div>
-                
+
                 <div className="board-item create-new">
                   <div className="board-preview create-board">
                     <span className="plus-icon">+</span>
@@ -271,6 +325,7 @@ const MainForm = () => {
             </div>
           </div>
         )}
+
 
         {/* Окно шаблона */}
         {selectedTemplate && (

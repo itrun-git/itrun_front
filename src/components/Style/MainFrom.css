@@ -105,11 +105,6 @@
   box-shadow: 0 0 24px rgba(20, 184, 166, 0.2);
 }
 
-/* Секции для организации контента по блокам */
-.section {
-  margin-bottom: 40px;
-}
-
 /* Сетка для размещения шаблонов в виде карточек */
 .template-grid {
   display: flex;
@@ -190,6 +185,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
 }
 
 /* Левая часть заголовка с иконкой и текстом */
@@ -439,29 +435,20 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Стиль активного элемента навигации */
 .nav-item.active {
   background-color: rgba(0, 123, 255, 0.2);
-  border: 2px solid #007bff;
 }
 
-/* Секция с рабочими областями */
-.workspace-section {
-  margin-top: 20px;
-}
-
-/* Заголовок секции */
 .section-title {
   font-size: 16px;
   width: 244px;
   height: 48px;
   color: #888;
   margin-bottom: 10px;
-  padding: 0px 16px;
+  padding: 0px 26px;
   font-weight: 600;
 }
 
-/* Список рабочих областей */
 .workspace-list {
   display: flex;
   flex-direction: column;
@@ -490,19 +477,26 @@
   background-color: rgba(0, 224, 213, 0.1);
 }
 
-/* Аватар рабочей области */
 .workspace-avatar {
   width: 24px;
   height: 24px;
   border-radius: 4px;
+  justify-content: center;
+  align-items: center;
   background-color: #ff6b35;
   display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 10px;
   font-weight: bold;
   color: white;
+  overflow: hidden;
 }
+
+.workspace-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 
 /* Название рабочей области */
 .workspace-name {
@@ -555,7 +549,7 @@
 .workspace-board {
   border-radius: 18px;
   padding: 20px;
-  border: 1px solid #2c3f3f;
+  /* border: 1px solid #2c3f3f; */
   color: #B4B4B4;
   font-family: 'Segoe UI', sans-serif;
 }
@@ -563,10 +557,10 @@
 /* Табы в workspace board */
 .workspace-tabs {
   display: flex;
-  gap: 0;
+  gap: 10px;
 }
 
-.tab-btn {
+/* .tab-btn {
   background: none;
   border: none;
   color: #888;
@@ -576,15 +570,25 @@
   font-weight: 500;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
+} */
+
+.tab-btn-wsp{
+  background-color: #282D34;
+  font-size: 14px;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  justify-self: center;
 }
 
-.tab-btn:hover {
-  color: #B4B4B4;
+.btn-logo-wsp{
+  height: 15px;
 }
 
-.tab-btn.active {
-  color: #00e0d5;
-  border-bottom-color: #00e0d5;
+.btn-logo-gap{
+  padding: 1px 5px 0px 0px;
+  display: flex;
+  align-items: center;
 }
 
 /* Контент workspace board */
@@ -656,7 +660,7 @@
 }
 
 /* Аватар workspace в заголовке */
-.workspace-avatar {
+.workspace-avatar-board {
   width: 32px;
   height: 32px;
   border-radius: 6px;
@@ -690,4 +694,13 @@
   width: 30px;
   height: 30px;
   opacity: 0.7;
+}
+
+.star-icon-content {
+  position: absolute;
+  bottom: 8px;
+  right: 21px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
