@@ -20,11 +20,7 @@ interface LoginFormInputs {
 const AutorizationForm: React.FC = () => {
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormInputs>({
+  const { register, handleSubmit, formState: { errors }, } = useForm<LoginFormInputs>({
     resolver: yupResolver(loginSchema),
   });
 
@@ -34,13 +30,13 @@ const AutorizationForm: React.FC = () => {
 
       if (response.token) {
         localStorage.setItem("authToken", response.token);
-        alert(response.message);
+        // alert(response.message);
         navigate("/mainform");
       } else {
-        alert("Authorization error: " + (response.message || "Unknown error"));
+        // alert("Authorization error: " + (response.message || "Unknown error"));
       }
     } catch (error: any) {
-      alert("Error while logging in: " + error.message);
+      // alert("Error while logging in: " + error.message);
     }
   };
 
@@ -55,20 +51,9 @@ const AutorizationForm: React.FC = () => {
         <h3 className="title">Log in to continue</h3>
 
         <form onSubmit={handleSubmit(onSubmit)} className="password-container">
-          <input
-            type="email"
-            placeholder="Email"
-            className="input"
-            {...register("email")}
-          />
+          <input type="email" placeholder="Email" className="input" {...register("email")} />
           {errors.email && <p className="error">{errors.email.message}</p>}
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="input"
-            {...register("password")}
-          />
+          <input type="password" placeholder="Password" className="input" {...register("password")} />
           {errors.password && <p className="error">{errors.password.message}</p>}
 
           <div className="options-row">

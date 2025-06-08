@@ -31,6 +31,7 @@
 }
 
 .board-content {
+  flex: 1;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -41,8 +42,9 @@
   scrollbar-color: #14b8a6 transparent; */
   padding: 1px 16px 16px 16px;
   margin-left: 300px;
-  gap: 30px;
+  gap: 24px;
   align-items: flex-start;
+  box-sizing: border-box;
 }
 
 .board-content::-webkit-scrollbar {
@@ -57,6 +59,8 @@
 .board-content::-webkit-scrollbar-track {
   background: transparent;
 }
+
+
 
 .board-header-content{
   display: flex;
@@ -116,6 +120,7 @@
 
 .tochka-btn{
   background-color: transparent;
+  border: transparent;
 }
 
 .board-column {
@@ -125,7 +130,7 @@
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid #14b8a6;
   border-radius: 32px;
-  padding: 16px;
+  padding: 0px 16px 16px 16px;
   width: 256px;
   max-width: 256px;
   min-height: 120px;
@@ -141,14 +146,20 @@
 }
 
 .board-card {
-  background-color: #1e1e2f;
-  color: white;
+  background-color: #2C333A;
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #14b8a6;
   cursor: grab;
   user-select: none;
   transition: transform 0.1s ease;
+  align-items: center;
+
+  min-height: 40px;
+  max-height: 224px;
+
+  font-size: 13px;
+  color: grey;
+  text-align: left;
 }
 
 .board-card:active {
@@ -162,11 +173,32 @@
 
 .board-object{
   display: flex;
-  gap: 5px;
   min-height: 32px;
   align-items: center;
+  justify-content: space-between;
 }
+
+.btn-setting-board-card{
+  background-color: transparent;
+  font-size: 28px;
+  border: transparent;
+  margin-bottom: 20px;
+}
+
 .board-folder{
   width: 21px;
   height: 21px;
+}
+
+.addbtn-card-collum{
+  background-color: transparent;
+  color: darkgray;
+  text-align: left;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.addbtn-card-collum:hover{
+  border-color: transparent;
+  background-color: rgb(44, 44, 44);
 }

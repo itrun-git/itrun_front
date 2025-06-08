@@ -15,7 +15,7 @@ type Workspace = {
 
 // Тип пропсов для компонента, включает функцию-обработчик клика по рабочему пространству
 type Props = {
-  onWorkspaceClick: ( data: { name: string; imageUrl?: string }) => void;
+  onWorkspaceClick: ( data: { id: string; name: string; imageUrl?: string }) => void;
 };
 
 // Компонент отображает список рабочих пространств пользователя и гостевых пространств
@@ -26,7 +26,6 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Получаем токен из localStorage
   const token = localStorage.getItem("authToken");
 
   // Загружаем рабочие пространства при монтировании компонента
@@ -36,10 +35,8 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
         setLoading(true);
         const workspaces = await getUserWorkspace();
         
-        // Разделяем на пользовательские и гостевые (пока что все в пользовательские)
-        // Позже можно добавить логику разделения на основе роли пользователя
         setUserWorkspaces(workspaces);
-        setGuestWorkspaces([]); // Пока что пустой массив
+        setGuestWorkspaces([]);
         
         setError(null);
       } catch (err) {
@@ -65,7 +62,7 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
   };
 
   // Обработчик закрытия модального окна с обновлением списка
-  const handleModalClose = async () => {
+  const ModalClose = async () => {
     setShowModal(false);
     // Перезагружаем список workspace после создания нового
     try {
@@ -93,7 +90,7 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
               <button
                 key={workspace.id} 
                 className="workspace-item" 
-                onClick={() => onWorkspaceClick({name: workspace.name, imageUrl: workspace.imageUrl })}>
+                onClick={() => onWorkspaceClick({id: workspace.id, name: workspace.name, imageUrl: workspace.imageUrl })}>
                 <div className="workspace-avatar">
                   {workspace.imageUrl ? (
                     <img src={workspace.imageUrl} alt={workspace.name} />
@@ -115,7 +112,7 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
           <div className="workspace-list">
             {guestWorkspaces.map((workspace) => (
               <button key={workspace.id} className="workspace-item"
-              onClick={() => onWorkspaceClick({ name: workspace.name, imageUrl: workspace.imageUrl })}>
+              onClick={() => onWorkspaceClick({id: workspace.id, name: workspace.name, imageUrl: workspace.imageUrl })}>
                 <div className="workspace-avatar">
                   {workspace.imageUrl ? (
                     <img src={workspace.imageUrl} alt={workspace.name} />
@@ -131,7 +128,7 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
       )}
 
       {showModal && (
-        <Modalwindow onClose={handleModalClose} token={token || ''} /> //closedBy="none" (попытка реализации клика вне рамки модального окна)
+        <Modalwindow onClose={ModalClose} token={token || ''} /> //closedBy="none" (попытка реализации клика вне рамки модального окна)
       )}
     </div>
   );

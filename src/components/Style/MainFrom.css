@@ -1,4 +1,3 @@
-/* Основной контейнер главной страницы с фоновым изображением */
 .main-page {
   width: 100%;
   min-height: 100vh;
@@ -10,7 +9,6 @@
   position: relative;
 }
 
-/* Левая боковая панель для размещения навигации и рабочих блоков */
 .left-side {
   display: flex;
   flex-direction: column;
@@ -21,7 +19,6 @@
   position: relative;
 }
 
-/* Блок навигационного меню с тематическим оформлением */
   .navigation-block {
     border: 1px solid #14b8a6;
     border-radius: 32px;
@@ -33,7 +30,6 @@
     width: 256px;
   }
 
-/* Блок рабочей области с инструментами и настройками */
 .workspace-block {
   border: 1px solid #14b8a6;
   border-radius: 32px;
@@ -46,7 +42,6 @@
   width: 296px;
 }
 
-/* Стилизация кнопок навигационной группы */
 .btn-grp {
   width: 100%;
   background-color: transparent;
@@ -63,25 +58,21 @@
   margin-bottom: 8px;
 }
 
-/* Эффект при наведении курсора на кнопку группы */
 .btn-grp:hover {
   background-color: rgba(20, 184, 166, 0.2);
 }
 
-/* Контейнер для иконок в кнопках */
 .btn-icon {
   display: flex;
   width: 10%;
 }
 
-/* Специальный контейнер для логотипа-иконки */
 .btn-icon-logo {
   display: flex;
   width: 10%;
   height: 16px;
 }
 
-/* Основной контент страницы с flex-разметкой */
 .main-content {
   display: flex;
   justify-content: flex-start;
@@ -91,7 +82,6 @@
   min-height: calc(100vh - 40px);
 }
 
-/* Центральная область для размещения основного содержимого */
 .central-side {
   flex: 1;
   font-size: 16px;
@@ -105,7 +95,6 @@
   box-shadow: 0 0 24px rgba(20, 184, 166, 0.2);
 }
 
-/* Сетка для размещения шаблонов в виде карточек */
 .template-grid {
   display: flex;
   flex-wrap: wrap;
@@ -113,7 +102,6 @@
   margin-top: 10px;
 }
 
-/* Карточка отдельного шаблона с hover-эффектами */
 .template-card {
   width: 220px;
   height: 140px;
@@ -135,7 +123,6 @@
   font-size: 14px;
 }
 
-/* Контейнер с горизонтальной прокруткой для шаблонов */
 .template-scroll {
   display: flex;
   gap: 16px;
@@ -145,19 +132,16 @@
   scrollbar-width: none;
 }
 
-/* Эффект затухания для крайних карточек при прокрутке */
 .template-card.faded {
   -webkit-mask-image: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 1) 280%);
   mask-image: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 1) 280%);
 }
 
-/* Анимация увеличения карточки при наведении */
 .template-card:hover {
   transform: scale(1.03);
   border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Цветовая схема для различных типов карточек */
 .green { background-color: #3e946b; }
 .blue { background-color: #2e5d84; }
 .darkblue { background-color: #3a4f7a; }
@@ -169,7 +153,6 @@
 .maroon { background-color: #803747; }
 .black { background-color: #1a1a1a; }
 
-/* Блок с предлагаемыми шаблонами */
 .suggested-templates {
   background-color: #1F363B;
   border-radius: 18px;
@@ -180,7 +163,6 @@
   position: relative;
 }
 
-/* Верхняя строка заголовка с элементами управления */
 .header-row {
   display: flex;
   justify-content: space-between;
@@ -188,14 +170,12 @@
   gap: 20px;
 }
 
-/* Левая часть заголовка с иконкой и текстом */
 .header-left {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-/* Круглая иконка в заголовке блока */
 .icon {
   background-color: #0f3d3e;
   padding: 6px;
@@ -206,7 +186,6 @@
   justify-content: center;
 }
 
-/* Кнопка закрытия блока в правом верхнем углу */
 .close-button {
   background: none;
   border: none;
@@ -217,19 +196,16 @@
   transition: opacity 0.2s;
 }
 
-/* Изменение прозрачности при наведении на кнопку закрытия */
 .close-button:hover {
   opacity: 1;
 }
 
-/* Дополнительный текст под заголовком */
 .subtext {
   color: #c0c0c0;
   margin: 5px 0 10px;
   font-size: 18px;
 }
 
-/* Выпадающий список для выбора категории */
 .category-select {
   background-color: #102c2c;
   color: white;
@@ -239,18 +215,15 @@
   margin: 10px;
 }
 
-/* Скрытие полосы прокрутки в webkit-браузерах */
 .template-scroll::-webkit-scrollbar {
   display: none;
 }
 
-/* Расширенный режим отображения шаблонов */
 .template-scroll.expanded {
   flex-wrap: wrap;
   overflow-x: visible;
 }
 
-/* Тег-метка в верхнем левом углу карточки */
 .tag {
   position: absolute;
   top: 8px;
@@ -262,13 +235,11 @@
   border-radius: 6px;
 }
 
-/* Основной заголовок в нижней части карточки */
 .titlemain {
   font-weight: bold;
   font-size: 15px;
 }
 
-/* Группировка элементов управления */
 .controls,
 .controls-center {
   display: flex;
@@ -276,19 +247,16 @@
   gap: 10px;
 }
 
-/* Элементы управления с выравниванием по левому краю */
 .controls {
   justify-content: flex-start;
   margin-top: 16px;
 }
 
-/* Элементы управления с центральным выравниванием */
 .controls-center {
   justify-content: center;
   flex: 1;
 }
 
-/* Кнопки со стрелками для навигации */
 .arrow-btn {
   background-color: transparent;
   border: none;
@@ -300,7 +268,6 @@
   transition: background-color 0.3s;
 }
 
-/* Кнопка для показа всех элементов */
 .show-all-btn {
   background-color: transparent;
   color: #00e0d5;
@@ -311,12 +278,10 @@
   text-decoration: underline;
 }
 
-/* Эффект при наведении на кнопку "Показать все" */
 .show-all-btn:hover {
   color: #00fff2;
 }
 
-/* Ссылка для перехода к обзору */
 .browse-link {
   margin-left: auto;
   color: #00e0d5;
@@ -325,22 +290,18 @@
   font-size: 14px;
 }
 
-/* Подчеркивание ссылки при наведении */
 .browse-link:hover {
   text-decoration: underline;
 }
 
-/* Секция с шаблонами */
 .template-section {
   position: relative;
 }
 
-/* Обертка для прокручиваемого контента */
 .scroll-wrapper {
   position: relative;
 }
 
-/* Контейнер для кнопки "Показать все" */
 .show-all-container {
   display: flex;
   justify-content: flex-end;
@@ -348,29 +309,25 @@
   padding-right: 10px;
 }
 
-/* Контейнер для группировки элементов управления */
 .controls-container {
   position: relative;
   display: flex;
-  justify-content: center; /* центрируем стрелки */
+  justify-content: center;
   align-items: center;
   height: 50px;
 }
 
-/* Кнопка "Показать все" ставиться с лева*/
 .left-block {
   position: absolute;
   right: 0;
   margin-left: 10px;
 }
 
-/* Центрирую кнопки */
 .center-buttons {
   display: flex;
   gap: 10px;
 }
 
-/* Нижние элементы управления с разделительной линией */
 .bottom-controls {
   display: flex;
   justify-content: center;
@@ -380,7 +337,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Универсальные кнопки управления */
 .control-btn {
   background-color: transparent;
   color: #888;
@@ -394,32 +350,27 @@
   text-decoration: none;
 }
 
-/* Изменение стиля кнопки управления при наведении */
 .control-btn:hover {
   color: #00e0d5;
   background-color: rgba(0, 224, 213, 0.1);
 }
 
-/* Эффект нажатия кнопки управления */
 .control-btn:active {
   transform: translateY(1px);
 }
 
-/* Контейнер для рабочих областей */
 .workspace-container {
   display: flex;
   flex-direction: column;
   padding: 20px;
 }
 
-/* Секция навигационных элементов */
 .nav-section {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-/* Отдельный элемент навигации */
 .nav-item {
   display: flex;
   align-items: center;
@@ -430,7 +381,6 @@
   transition: background-color 0.2s;
 }
 
-/* Подсветка элемента навигации при наведении */
 .nav-item:hover {
   background-color: rgba(255, 255, 255, 0.1);
 }
@@ -454,7 +404,6 @@
   flex-direction: column;
 }
 
-/* Элемент списка рабочих областей */
 .workspace-item {
   width: 100%;
   background-color: transparent;
@@ -471,7 +420,6 @@
   margin-bottom: 8px;
 }
 
-/* Подсветка элемента рабочей области при наведении */
 .workspace-item:hover {
   color: #00e0d5;
   background-color: rgba(0, 224, 213, 0.1);
@@ -498,13 +446,11 @@
 }
 
 
-/* Название рабочей области */
 .workspace-name {
   font-size: 14px;
   color: #fff;
 }
 
-/* Модальное окно для шаблонов */
 .template-window {
   position: fixed;
   top: 50%;
@@ -545,7 +491,6 @@
   height: 24px;
 }
 
-/* Стили для workspace board */
 .workspace-board {
   border-radius: 18px;
   padding: 20px;
@@ -554,7 +499,6 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Табы в workspace board */
 .workspace-tabs {
   display: flex;
   gap: 10px;
@@ -591,14 +535,12 @@
   align-items: center;
 }
 
-/* Контент workspace board */
 .workspace-content {
   display: flex;
   gap: 20px;
   margin-top: 20px;
 }
 
-/* Элементы досок в workspace */
 .board-item {
   display: flex;
   flex-direction: column;
@@ -612,7 +554,6 @@
   transform: translateY(-2px);
 }
 
-/* Превью доски */
 .board-preview {
   width: 200px;
   height: 120px;
@@ -626,18 +567,15 @@
   font-weight: bold;
 }
 
-/* Доска Basic Board */
 .basic-board {
   background-color: #803747;
 }
 
-/* Доска для создания новой */
 .create-board {
   background-color: #2a4a4d;
   border: 2px dashed #4a6a6d;
 }
 
-/* Звездочка для избранной доски */
 .star-icon {
   position: absolute;
   bottom: 8px;
@@ -646,20 +584,17 @@
   font-size: 16px;
 }
 
-/* Плюс для создания новой доски */
 .plus-icon {
   font-size: 36px;
   color: #888;
 }
 
-/* Название доски */
 .board-name {
   font-size: 14px;
   color: #B4B4B4;
   text-align: center;
 }
 
-/* Аватар workspace в заголовке */
 .workspace-avatar-board {
   width: 32px;
   height: 32px;
@@ -673,7 +608,6 @@
   color: white;
 }
 
-/* Обновление board-section для иконок */
 .board-section {
   margin-bottom: 40px;
 }

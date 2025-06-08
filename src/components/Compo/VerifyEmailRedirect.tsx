@@ -19,12 +19,12 @@ useEffect(() => {
   confirmEmail(token)
     .then(() => {
       console.log("Email confirmed");
-      alert("Email успешно подтверждён! Теперь можно войти.");
+      // alert("Email успешно подтверждён! Теперь можно войти.");
       navigate("/login");
     })
     .catch((err) => {
       console.log("Ошибка при подтверждении:", err);
-      alert("Ошибка подтверждения почты: " + err.message);
+      // alert("Ошибка подтверждения почты: " + err.message);
       navigate("/login");
     });
 }, [token, navigate]);

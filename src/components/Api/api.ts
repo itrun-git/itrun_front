@@ -45,7 +45,6 @@ export interface User {
 }
 
 //Интрефейсы главной странички
-
 export interface Workspace {
   id: string;
   name: string;
@@ -145,7 +144,12 @@ export async function getAllUsers(): Promise<User[]> {
     method: 'GET',
   });
   if (!response.ok) throw new Error('Failed to fetch users');
-  return response.json();
+  const users = await response.json();
+  return users.map((user: any) => ({
+    ...user,
+    // avatarUrl: user.avatarUrl ? `http://147.135.210.93:3002${user.avatarUrl}`: null
+    avatarUrl: user.avatarUrl ? `http://147.135.210.93:3002${user.avatarUrl}`: null
+  }));
 }
 
   export async function getUserById(id: string): Promise<User> {
@@ -263,7 +267,7 @@ export async function getUserAvatar(token: string): Promise<{ avatarUrl: string 
     throw new Error(errorData.message || 'Failed to get user avatar');
   }
   const text = await response.text();
-  const result = `http://localhost:3002` + text;
+  const result = `http://147.135.210.93:3002` + text;
   return { avatarUrl: result };
 
 }
@@ -313,6 +317,7 @@ export async function updateEmail(userId: string, email: string) {
 
   return await response.json();
 }
+
 // Методы воркспейса главной странчки
 export async function getUserWorkspace(): Promise<Workspace[]> {
   const token = localStorage.getItem("authToken");
@@ -343,7 +348,7 @@ export async function getUserWorkspace(): Promise<Workspace[]> {
   return workspaces.map((w: any) => ({
     ...w,
     imageUrl: w.imageUrl 
-      ? `http://localhost:3002${w.imageUrl}` 
+      ? `http://147.135.210.93:3002${w.imageUrl}` 
       : null,
   }));
 }

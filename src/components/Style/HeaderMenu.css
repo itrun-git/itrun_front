@@ -1,5 +1,3 @@
-/* HeaderMenu.css */
-
 .header {
   width: 100%;
   height: 60px;
@@ -10,9 +8,9 @@
   box-sizing: border-box;
   font-family: 'Segoe UI', sans-serif;
   gap: 40px; 
+  margin-bottom: 20px;
 }
 
-/* Левая часть заголовка с иконкой и текстом */
 .header-navbar {
   display: flex;
   align-items: center;
@@ -100,7 +98,6 @@
   font-weight: bold;
 }
 
-/* User Avatar Styles */
 .user-avatar-container {
   position: relative;
   display: inline-block;
@@ -130,7 +127,6 @@
   cursor: pointer;
 }
 
-/* User Dropdown Menu */
 .user-dropdown-menu {
   position: absolute;
   top: 100%;
@@ -238,7 +234,7 @@
 }
 
 .logo-text .header-menu-btn {
-  font-size: inherit;
+  font-size: 28px;
   color: inherit;
 }
 

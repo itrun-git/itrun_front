@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Compo/header";
 import "../Style/WorkSpace.css";
 import WorkSpaceLeftBoard from "../Compo/WorkSpaceLeftBoard";
@@ -8,11 +8,8 @@ import rightarrow from "../Logo/rightarrow.png";
 import pen from "../Logo/pen.png";
 import blackmember from "../Logo/blackmember.png";
 import zamok from "../Logo/zamok.png"
-
-type Workspace = {
-  id: number;
-  avatar: string;
-};
+import { useLocation, useParams } from "react-router-dom";
+import { getWorkspaceById } from "../Api/api";
 
 type Template = {
   className: string;
@@ -25,10 +22,34 @@ const WorkspacePage = () => {
   const [suggestedShowAll, setSuggestedShowAll] = useState(false);
   const [suggestedIndex, setSuggestedIndex] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("boards");
   const [activeMemberTab, setActiveMemberTab] = useState("workspace");
 
-  const userWorkspaces: Workspace[] = [{ id: 1, avatar: "VL" }];
+  const location = useLocation();
+  const state = location.state as { name?: string; imageUrl?: string } | undefined;
+
+  const { workspaceId, tab } = useParams<{ workspaceId: string; tab?: string }>();
+
+  const [activeTab, setActiveTab] = useState(tab || "boards");
+  const [workspaceName, setWorkspaceName] = useState("Loading...");
+  const [workspaceImageUrl, setWorkspaceImageUrl] = useState<string | null>(null);
+
+useEffect(() => {
+  async function fetchWorkspace() {
+    if (!workspaceId) return;
+    try {
+      const data = await getWorkspaceById(workspaceId);
+      console.log("Workspace data:", data);
+      setWorkspaceName(data.name ?? "Unnamed Workspace");
+      setWorkspaceImageUrl(data.imageUrl ?? null);
+    } catch (error) {
+      console.error("Error fetching workspace:", error);
+      setWorkspaceName("Workspace not found");
+      setWorkspaceImageUrl(null);
+    }
+  }
+  fetchWorkspace();
+}, [workspaceId]);
+
 
   const templates: Template[] = [
     { className: "green", label: "Basic Board" },
@@ -43,21 +64,6 @@ const WorkspacePage = () => {
   const recentBoards: Template[] = [
     { className: "create-new", label: "Create new board", isCreateNew: true },
     { className: "green", label: "Basic Board", hasIcon: true },
-  ];
-
-  const bottomBoards1: Template[] = [
-    { className: "gray", label: "Marketing board" },
-    { className: "pink", label: "Design Sprint" },
-    { className: "teal", label: "Content Plan" },
-    { className: "orange", label: "Roadmap" },
-    { className: "lime", label: "Sprint Goals" },
-  ];
-
-  const bottomBoards2: Template[] = [
-    { className: "aqua", label: "Bug Tracker" },
-    { className: "brown", label: "Hiring Plan" },
-    { className: "cyan", label: "Product Dev" },
-    { className: "gold", label: "User Research" },
   ];
 
   const scrollByArrow = (
@@ -95,8 +101,8 @@ const WorkspacePage = () => {
   }) => {
     const visibleBoards = showAll
       ? boards
-      : boards.slice(currentIndex, currentIndex + 4);
-    const canScroll = boards.length > 3;
+      : boards.slice(currentIndex, currentIndex + 5);
+    const canScroll = boards.length > 4;
 
     return (
       <div className="section">
@@ -106,7 +112,7 @@ const WorkspacePage = () => {
             {visibleBoards.map((board, index) => (
               <div
                 key={`${sectionKey}-${index}`}
-                className={`template-card ${board.className} ${
+                className={`template-card-workspace ${board.className} ${
                   !showAll && index === 3 ? "faded" : ""
                 } ${board.isCreateNew ? "create-new-card" : ""}`}
                 onClick={() => board.isCreateNew ? createNewBoard() : openTemplateWindow(board.label)}>
@@ -266,7 +272,7 @@ const WorkspacePage = () => {
         <button className="change-btn">Change</button>
       </div>
 
-      <p className="delete-workspace">Delete this Workspace?</p>
+      <button className="delete-workspace">Delete this Workspace?</button>
     </div>
   </div>
 );
@@ -320,10 +326,18 @@ const WorkspacePage = () => {
             <WorkSpaceLeftBoard activeTab={activeTab} setActiveTab={setActiveTab}/>
             <div className="central-sideboard">
               <div className="workspace-header-place">
-                <div className="workspace-icon-card-board">VH</div>
+                <div className="workspace-icon-card-board">{workspaceImageUrl ? (
+                  <img src={workspaceImageUrl} alt={workspaceName} />
+                  ) : (workspaceName
+                  .split(' ')
+                  .map(word => word[0])
+                  .join('')
+                  .toUpperCase()
+                  .substring(0, 2)
+                  )}</div>
                 <div className="workspace-name-private">
                   <div className="workspace-name-leftbar">
-                    Vlad's workspace
+                    {workspaceName}
                     <img src={pen} alt="Edit" className="pen-icon" />
                   </div>
                   <div className="workspace-private-header-menu">

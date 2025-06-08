@@ -24,7 +24,7 @@ const Header = () => {
 
   //Навигация на mainform
   const navigate = useNavigate();
-  const handleTabClick = () => {
+  const TabClick = () => {
     navigate('/mainform');
   };
 
@@ -77,20 +77,20 @@ const Header = () => {
 
 
   useEffect(() => {
-    const handleClickOutside = (event: { target: any; }) => {
+    const ClickOutside = (event: { target: any; }) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
     };
 
     if (isUserMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('mousedown', ClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', ClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', ClickOutside);
     };
   }, [isUserMenuOpen]);
 
@@ -98,7 +98,7 @@ const Header = () => {
     ? userData.name.split(' ').map(n => n[0]).join('').toUpperCase()
     : "?";
 
-  const handleLogout = async () => {
+  const Logout = async () => {
     try {
       if (token) {
         await logoutUser(token);
@@ -113,7 +113,7 @@ const Header = () => {
     setIsUserMenuOpen(false);
   };
 
-  const handleSettings = () => {
+  const Settings = () => {
     window.location.href = '/settings';
     setIsUserMenuOpen(false);
   };
@@ -121,12 +121,12 @@ const Header = () => {
     <header className="header">
       <div className="header-left">
         <div className="logo">
-          <button className="header-menu-btn" onClick={handleTabClick}>
+          <button className="header-menu-btn" onClick={TabClick}>
           <img src={LogoIcon} alt="ItRun Logo" className="logo"/>
           </button>
           </div>
           <div className="logo-text">
-            <button className="header-menu-btn" onClick={handleTabClick}>
+            <button className="header-menu-btn" onClick={TabClick}>
             ItRun
             </button>
           </div>
@@ -147,10 +147,8 @@ const Header = () => {
           setIsUserMenuOpen(prev => !prev)}
           ref={menuRef}>
           {userData.avatar ? (
-            <img src={userData.avatar} alt="Avatar" className="avatar-img" />
-          ) : (
-            <div className="avatar-fallback">{userInitials}</div>
-          )}
+            <img src={userData.avatar} alt="Avatar" className="avatar-img"/>
+          ) : (<div className="avatar-fallback">{userInitials}</div> )}
 
           {isUserMenuOpen && (
             <div className="user-dropdown-menu">
@@ -162,11 +160,11 @@ const Header = () => {
               <div className="menu-divider"></div>
 
               <div className="menu-actions">
-                <button onClick={handleSettings} className="menu-action-btn">
+                <button onClick={Settings} className="menu-action-btn">
                   <span className="menu-icon">⚙️</span>
                   Settings
                 </button>
-                <button onClick={handleLogout} className="menu-action-btn logout-btn">
+                <button onClick={Logout} className="menu-action-btn logout-btn">
                   <span className="menu-icon">🚪</span>
                   Log out
                 </button>

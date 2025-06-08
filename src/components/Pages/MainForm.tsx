@@ -35,11 +35,16 @@ const MainForm = () => {
 
   const [selectedWorkspaceName, setSelectedWorkspaceName] = useState<string>('My Workspace');
   const [selectedWorkspaceImage, setSelectedWorkspaceImage] = useState<string | undefined>(undefined);
+  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null);
 
   //Навигация на воркспейс
   const navigate = useNavigate();
-  const handleTabClick = () => {
-    navigate('/workspace');
+  const TabClick = (tab: string) => {
+    if(selectedWorkspaceId){
+    navigate(`/workspace/${selectedWorkspaceId}/${tab}`);
+  }else{
+      console.warn(`No workaspace`);
+    }
   };
 
   // Основные шаблоны (Suggested)
@@ -160,20 +165,19 @@ const MainForm = () => {
             </div>
           )}
           </div>
-
           )}
         </div>
       </div>
     );
   };
 
-  const handleCloseBoard = () => setShowCentralBoard(false);
-  const handleHiddenBoard = () => setShowCentralBoard(false);
-  const handleItRunClick = () => {
+  const CloseBoard = () => setShowCentralBoard(false);
+  const HiddenBoard = () => setShowCentralBoard(false);
+  const ItRunClick = () => {
     setShowCentralBoard(true);
     setShowWorkspaceBoard(false);
   };
-  const handleWorkspaceClick = () => {
+  const WorkspaceClick = () => {
     setShowWorkspaceBoard(true);
     setShowCentralBoard(false);
   };
@@ -186,7 +190,7 @@ const MainForm = () => {
       <div className="main-content">
         <div className="left-side">
           <div className="navigation-block">
-            <button className="btn-grp active" onClick={handleItRunClick}>
+            <button className="btn-grp active" onClick={ItRunClick}>
               <span className="btn-icon-logo"><img src={LogoIcon} alt="ItRun Logo" className='btnleftside' /></span>
               Run
             </button>
@@ -200,7 +204,7 @@ const MainForm = () => {
             </button>
           </div>
           <div className="workspace-block">
-            <UserWorkSpace onWorkspaceClick={(data) => { handleWorkspaceClick(); setSelectedWorkspaceName(data.name); setSelectedWorkspaceImage(data.imageUrl); }} />
+            <UserWorkSpace onWorkspaceClick={(data) => { WorkspaceClick(); setSelectedWorkspaceName(data.name); setSelectedWorkspaceImage(data.imageUrl); setSelectedWorkspaceId(data.id)}} />
           </div>
         </div>
 
@@ -213,15 +217,11 @@ const MainForm = () => {
                   <img src={LogoIcon} alt="ItRun Logo" className="logo" />
                   <h2>Suggested templates</h2>
                 </div>
-                <button className="close-button" onClick={handleCloseBoard}>✕</button>
+                <button className="close-button" onClick={CloseBoard}>✕</button>
               </div>
               <p className="subtext">Get going faster with a template from itRun community</p>
 
-              <BoardSection
-                title=""
-                boards={templates}
-                currentIndex={suggestedIndex}
-                showAll={suggestedShowAll}
+              <BoardSection title="" boards={templates} currentIndex={suggestedIndex} showAll={suggestedShowAll}
                 onToggleShowAll={() => setSuggestedShowAll(!suggestedShowAll)}
                 onLeft={() => scrollByArrow(-1, suggestedIndex, setSuggestedIndex, templates.length)}
                 onRight={() => scrollByArrow(1, suggestedIndex, setSuggestedIndex, templates.length)}
@@ -229,22 +229,14 @@ const MainForm = () => {
             </div>
 
             {/* Starred Boards */}
-            <BoardSection image={star}
-              title="Starred boards"
-              boards={starredBoards}
-              currentIndex={starredIndex}
-              showAll={starredShowAll}
+            <BoardSection image={star} title="Starred boards" boards={starredBoards} currentIndex={starredIndex} showAll={starredShowAll}
               onToggleShowAll={() => setStarredShowAll(!starredShowAll)}
               onLeft={() => scrollByArrow(-1, starredIndex, setStarredIndex, starredBoards.length)}
               onRight={() => scrollByArrow(1, starredIndex, setStarredIndex, starredBoards.length)}
               sectionKey="starred"/>
 
             {/* Recently Viewed */}
-            <BoardSection
-              title="Recently viewed"
-              image={timer}
-              boards={recentBoards}
-              currentIndex={recentIndex}
+            <BoardSection title="Recently viewed" image={timer} boards={recentBoards} currentIndex={recentIndex}
               showAll={recentShowAll}
               onToggleShowAll={() => setRecentShowAll(!recentShowAll)}
               onLeft={() => scrollByArrow(-1, recentIndex, setRecentIndex, recentBoards.length)}
@@ -252,8 +244,8 @@ const MainForm = () => {
               sectionKey="recent"/>
            
             <div className="bottom-controls">
-              <button className="control-btn" onClick={handleCloseBoard}>Closed boards</button>
-              <button className="control-btn" onClick={handleHiddenBoard}>Hidden boards</button>
+              <button className="control-btn" onClick={CloseBoard}>Closed boards</button>
+              <button className="control-btn" onClick={HiddenBoard}>Hidden boards</button>
             </div>
           </div>
         )}
@@ -268,10 +260,8 @@ const MainForm = () => {
                     <img src={selectedWorkspaceImage} alt="Workspace Avatar" className="workspace-avatar-board workspace-avatar-image"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
                         target.nextElementSibling?.classList.remove('hidden');
-                      }}
-                    />
+                      }}/>
                   ) : (
                     <span className="workspace-avatar-board">
                       {getWorkspaceInitials(selectedWorkspaceName)}
@@ -281,25 +271,19 @@ const MainForm = () => {
                 </div>
 
                 <div className="workspace-tabs">
-                  <button className="tab-btn-wsp" onClick={handleTabClick}>
+                  <button className="tab-btn-wsp" onClick={()=> TabClick('boards')}>
                     <span className='btn-logo-gap'>
                       <img src={board} className='btn-logo-wsp' alt="Boards" />
                     </span>
                     Boards
                   </button>
-                  <button className="tab-btn-wsp" onClick={handleTabClick}>
-                    <span className='btn-logo-gap'>
-                      <img src={spisok} className='btn-logo-wsp' alt="Views" />
-                    </span>
-                    Views
-                  </button>
-                  <button className="tab-btn-wsp" onClick={handleTabClick}>
+                  <button className="tab-btn-wsp" onClick={()=> TabClick('Members')}>
                     <span className='btn-logo-gap'>
                       <img src={member} className='btn-logo-wsp' alt="Members" />
                     </span>
                     Members
                   </button>
-                  <button className="tab-btn-wsp" onClick={handleTabClick}>
+                  <button className="tab-btn-wsp" onClick={()=> TabClick('Settings')}>
                     <span className='btn-logo-gap'>
                       <img src={settings} className='btn-logo-wsp' alt="Settings" />
                     </span>
