@@ -229,20 +229,23 @@ const MainForm = () => {
             </div>
 
             {/* Starred Boards */}
+            <div className="starred-boards">
             <BoardSection image={star} title="Starred boards" boards={starredBoards} currentIndex={starredIndex} showAll={starredShowAll}
               onToggleShowAll={() => setStarredShowAll(!starredShowAll)}
               onLeft={() => scrollByArrow(-1, starredIndex, setStarredIndex, starredBoards.length)}
               onRight={() => scrollByArrow(1, starredIndex, setStarredIndex, starredBoards.length)}
               sectionKey="starred"/>
+            </div>
 
             {/* Recently Viewed */}
+            <div className="recently-viewed">
             <BoardSection title="Recently viewed" image={timer} boards={recentBoards} currentIndex={recentIndex}
               showAll={recentShowAll}
               onToggleShowAll={() => setRecentShowAll(!recentShowAll)}
               onLeft={() => scrollByArrow(-1, recentIndex, setRecentIndex, recentBoards.length)}
               onRight={() => scrollByArrow(1, recentIndex, setRecentIndex, recentBoards.length)}
               sectionKey="recent"/>
-           
+            </div>
             <div className="bottom-controls">
               <button className="control-btn" onClick={CloseBoard}>Closed boards</button>
               <button className="control-btn" onClick={HiddenBoard}>Hidden boards</button>
