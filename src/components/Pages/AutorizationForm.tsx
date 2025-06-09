@@ -43,7 +43,7 @@ const AutorizationForm: React.FC = () => {
   return (
     <div className="registration-container">
       <div className="form-box">
-        <div className=".logo-section-authorization">
+        <div className="logo-section-authorization">
           <img src={LogoIcon} alt="ItRun Logo" className="logo" />
           <h2>ItRun</h2>
         </div>
