@@ -4,6 +4,8 @@ import LogoIcon from "../Logo/LogoIcon.png";
 import { getUserFullName, getUserEmail, getUserAvatar, logoutUser } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
 import vopsor from '../Logo/vopsor.png';
+import exit from '../Logo/exit.png';
+import settings from '../Logo/settings.png';
 import bell from "../Logo/bell.png";
 import loopa from "../Logo/loopa.png";
 const Header = () => {
@@ -22,7 +24,6 @@ const Header = () => {
   const menuRef = useRef <HTMLDivElement> (null);
   const token = localStorage.getItem('authToken');
 
-  //Навигация на mainform
   const navigate = useNavigate();
   const TabClick = () => {
     navigate('/mainform');
@@ -161,11 +162,11 @@ const Header = () => {
 
               <div className="menu-actions">
                 <button onClick={Settings} className="menu-action-btn">
-                  <span className="menu-icon">⚙️</span>
+                  <span className="menu-icon"><img className='setting-header-btn' src={settings}/></span>
                   Settings
                 </button>
                 <button onClick={Logout} className="menu-action-btn logout-btn">
-                  <span className="menu-icon">🚪</span>
+                  <span className="menu-icon"><img className='exit-header-btn' src={exit}></img></span>
                   Log out
                 </button>
               </div>
