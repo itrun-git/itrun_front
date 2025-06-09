@@ -137,7 +137,7 @@ const MainForm = () => {
                 key={`${sectionKey}-${index}`}>
                   <div className='card-content-template'>
                     {board.label || 'Board'}
-                    {sectionKey === 'starred' && (<img src={board.isStarred ? star : starlight}
+                    {sectionKey === 'starred' && (<img src={board.isStarred ? starlight : star}
                     alt = "star"
                     className='star-icon-content'
                     onClick={() => toggleStarred(currentIndex + index)}/>)}

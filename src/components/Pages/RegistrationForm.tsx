@@ -60,7 +60,7 @@ const RegistrationForm: React.FC = () => {
   }, 1000);
 
 
-  // Функция для проверки размера файла
+  // Функциональность для проверки размера файла
   const validateFile = (file: File): string | null => {
     const MAX_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
@@ -91,7 +91,6 @@ const RegistrationForm: React.FC = () => {
 
     try {
       setPhotoFile(file);
-      // Создаем превью
       setPhotoPreview(URL.createObjectURL(file));
     } catch (error) {
       setPhotoError('Error processing file');
@@ -99,7 +98,7 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
-  // Функция загрузки фото на сервер - используем ваш API
+  // Функциональность загрузки фото на сервер - используем ваш API
   const uploadPhotoToServer = async (file: File, userId: string): Promise<void> => {
     try {
       const user = await uploadAvatar(file, userId);
@@ -110,7 +109,7 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
-  // Функция отправки письма подтверждения
+  // Функциональность отправки письма подтверждения
   const SendVerificationEmail = async (userId?: string) => {
     try {
       setLoading(true);
@@ -132,7 +131,7 @@ const RegistrationForm: React.FC = () => {
     }
   };
 
-  // Функция смены email
+  // Функциональность смены email
   const ChangeEmail = async () => {
     try {
       setLoading(true);
@@ -195,7 +194,6 @@ const RegistrationForm: React.FC = () => {
       if (step === 4) {
         setLoading(true);
 
-        // Подготавливаем данные для отправки (без фото и purpose пока)
         const userData: CreateUserDto = {
           email: data.email,
           name: data.fullName,      
@@ -236,7 +234,6 @@ const RegistrationForm: React.FC = () => {
         console.log('Регистрация успешна! Переходим к подтверждению email');
         // Переходим к 5-му шагу
         setStep(5);
-        // Автоматически отправляем письмо подтверждения
         await SendVerificationEmail(newUser.id);
         return;
       }
@@ -321,8 +318,7 @@ const RegistrationForm: React.FC = () => {
           {step === 3 && (
             <>
               <h3 className="title">Add a profile photo</h3>
-              <p className="subtitle">Have a favorite selfie? Upload it now (max 5MB)</p>
-
+              {/* <p className="subtitle">Have a favorite selfie? Upload it now (max 5MB)</p> */}
               {photoError && <p className="error">{photoError}</p>}
 
               <div className="photo-upload">
@@ -333,10 +329,10 @@ const RegistrationForm: React.FC = () => {
                     <img src={CameraIcon} alt="Upload" className="camera-icon" />
                   )}
                 </label>
-                <input type="file" id="file-upload" accept="image/*"
-                  onChange={PhotoUpload}/>
               </div>
-
+              <div className="hiden-text">
+                <input type="file" id="file-upload" accept="image/*" onChange={PhotoUpload}/>
+              </div>
               <button className="submit-button" type="submit" disabled={loading}>
                 Continue
               </button>

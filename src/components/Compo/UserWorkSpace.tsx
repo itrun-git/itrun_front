@@ -3,7 +3,6 @@ import Modalwindow from './addWorkspace';
 import { getUserWorkspace } from '../Api/api';
 import '../Style/addworkspace.css';
 
-// Тип описывает структуру объекта рабочего пространства
 type Workspace = {
   id: string;
   name: string;
@@ -18,7 +17,6 @@ type Props = {
   onWorkspaceClick: ( data: { id: string; name: string; imageUrl?: string }) => void;
 };
 
-// Компонент отображает список рабочих пространств пользователя и гостевых пространств
 const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
   const [showModal, setShowModal] = useState(false);
   const [userWorkspaces, setUserWorkspaces] = useState<Workspace[]>([]);
@@ -28,7 +26,6 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
 
   const token = localStorage.getItem("authToken");
 
-  // Загружаем рабочие пространства при монтировании компонента
   useEffect(() => {
     const loadWorkspaces = async () => {
       try {

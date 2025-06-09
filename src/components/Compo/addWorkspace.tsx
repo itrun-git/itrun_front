@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createWorkspace, uploadWorkspaceImage, generateInviteLink } from "../Api/api";
 import createworkspace from "../Logo/createworkspace.png";
+import camera from "../Logo/camera.png";
 import createfinishworkspace from "../Logo/createfinishworkspace.png";
 
 interface ModalProps {
@@ -25,9 +26,10 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
   });
   const [workspaceId, setWorkspaceId] = useState<string | null>(null);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
   const [creating, setCreating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
 
   useEffect(() => {
     const savedData = localStorage.getItem('workspaceFormData');
@@ -92,8 +94,13 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
     }
   };
 
-  const handleImageSelect = (file: File) => {
+  const ImageSelect = (file: File) => {
     setFormData(prev => ({ ...prev, profileImage: file }));
+    const reader = new FileReader();
+    reader.onloadend = () =>{
+      setImagePreview(reader.result as string);
+    }
+    reader.readAsDataURL(file);
     console.log("Image selected:", file.name);
   };
 
@@ -145,20 +152,30 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
     <div>
       <div className="profile-section">
         <div className="profile-upload">
-          <h3>Add a profile photo</h3>
-          <button type="button" className="upload-btn" onClick={triggerFileInput}>
-            {formData.profileImage ? "Change Image" : "Upload"}
-          </button>
-          <input type="file" accept="image/*" ref={fileInputRef} style={{ display: 'none' }}
+
+          <div className="photo-circle-wrapper-add" onClick={triggerFileInput}>
+            {imagePreview ? (
+              <img src={imagePreview} alt="Preview" className="photo-circle-preview-add" />
+            ) : (
+            <div className="photo-circle-placeholder"><img className="photo-size-camera" src={camera}/></div>
+            )}
+          </div>
+          <div>
+            <h3 className="text-step2-add">Add a profile photo</h3>
+            <button type="button" className="upload-btn" onClick={triggerFileInput}>
+              {formData.profileImage ? "Change Image" : "Upload"}
+            </button>
+          </div>
+          <input className="hidde-text-add-workspace" type="file" accept="image/*" ref={fileInputRef}
            onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) {
-              handleImageSelect(file);
+              ImageSelect(file);
             }
           }}/>
-          {formData.profileImage && (
+          {/* {formData.profileImage && (
             <p className="selected-file">Selected: {formData.profileImage.name}</p>
-          )}
+          )} */}
           
         </div>
       </div>
@@ -207,7 +224,7 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
       case 1:
         return "Let's build a Workspace";
       case 2:
-        return "Add workspace details";
+        return "";
       default:
         return "";
     }
@@ -218,7 +235,7 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
       case 1:
         return "Boost your productivity by making it easier for everyone to access boards in one location.";
       case 2:
-        return "Customize your workspace with a photo and description to help your team get oriented.";
+        return "";
       default:
         return "";
     }

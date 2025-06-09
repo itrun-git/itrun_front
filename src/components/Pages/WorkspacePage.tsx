@@ -6,6 +6,7 @@ import LogoIcon from "../Logo/LogoIcon.png";
 import leftarrow from "../Logo/leftarrow.png";
 import rightarrow from "../Logo/rightarrow.png";
 import pen from "../Logo/pen.png";
+import starlight from "../Logo/starlight.png";
 import blackmember from "../Logo/blackmember.png";
 import zamok from "../Logo/zamok.png"
 import { useLocation, useParams } from "react-router-dom";
@@ -118,7 +119,7 @@ useEffect(() => {
                 onClick={() => board.isCreateNew ? createNewBoard() : openTemplateWindow(board.label)}>
                 <div className="card-content">
                   {board.label || "Board"}
-                  {board.hasIcon && <span className="star-icon">⭐</span>}
+                  {board.hasIcon && <span className="star-icon"><img src={starlight}></img></span>}
                 </div>
               </div>
             ))}

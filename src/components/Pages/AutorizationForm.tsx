@@ -43,12 +43,12 @@ const AutorizationForm: React.FC = () => {
   return (
     <div className="registration-container">
       <div className="form-box">
-        <div className="logo-section">
+        <div className=".logo-section-authorization">
           <img src={LogoIcon} alt="ItRun Logo" className="logo" />
           <h2>ItRun</h2>
         </div>
         
-        <h3 className="title">Log in to continue</h3>
+        <h3 className="title-autorization">Log in to continue</h3>
 
         <form onSubmit={handleSubmit(onSubmit)} className="password-container">
           <input type="email" placeholder="Email" className="input" {...register("email")} />

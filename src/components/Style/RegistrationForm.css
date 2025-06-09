@@ -24,7 +24,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
 }
 
 .logo {
@@ -37,7 +36,7 @@
   /* font-size: 20px; */
   font-weight: bold;
   color: white;
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
 }
 
 .subtitle {
@@ -151,6 +150,10 @@
   display: flex;
   justify-content: center;
   margin: 20px 0;
+}
+
+.hiden-text{
+  display: none;
 }
 
 .photo-circle {
