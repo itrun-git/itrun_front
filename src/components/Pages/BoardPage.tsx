@@ -13,12 +13,15 @@ type Card = {
     content: string;
 };
 
-type Columns = Record<string, Card[]>;
+type Column = {
+    id: string;
+    title: string;
+    cards: Card[];
+}
 
 type DroppableColumnProps = {
-    columnId: string;
-    cards: Card[];
-    moveCard: (cardId: string, sourceColumn: string, targetColumn: string) => void;
+    column: Column;
+    moveCard: (cardId: string, sourceColumnId: string, targetColumnId: string) => void;
     addCard: (columnId: string) => void;
 };
 
@@ -28,72 +31,72 @@ type DraggableCardProps = {
 };
 
 const BoardPage = () => {
-
-    const [columns, setColumns] = useState<Columns>({
-        backlog: [
-            // { id: 'card-1', content: 'Task 1' },
-            // { id: 'card-2', content: 'Task 2' },
-        ],
-        inProgress: [
-        ],
-        done: [
-            // { id: 'card-4', content: 'Task 4' },
-            // { id: 'card-5', content: 'Task 5' },
-            // { id: 'card-6', content: 'Task 6' },
-        ],
-        todo: [
-            // { id: 'card-7', content: 'Task 7' },
-            // { id: 'card-8', content: 'Task 8' },
-            // { id: 'card-9', content: 'Task 9' },
-        ],
-        finsh: [
-            // { id: 'card-10', content: 'Task 10' },
-            // { id: 'card-11', content: 'Task 11' },
-            // { id: 'card-12', content: 'Task 12' },
-        ],
-        finsh1: [
-            // { id: 'card-13', content: 'Task 13' },
-            // { id: 'card-14', content: 'Task 14' },
-            // { id: 'card-15', content: 'Task 15' },
-        ],
-        finsh3: [
-            // { id: 'card-16', content: 'Task 16' },
-            // { id: 'card-17', content: 'Task 17' },
-            // { id: 'card-18', content: 'Task 18' },
-        ],
-    });
+    const [columns, setColumns] = useState<Column[]>([
+        {id: "backlog", title: 'Baclog', cards: []},
+        {id: "InProgress", title: 'InProgress', cards: []},
+        {id: "done", title: 'done', cards: []},
+        {id: "todo", title: 'todo', cards: []},
+        {id: "finish", title: 'finish', cards: []},
+        {id: "finish1", title: 'finish1', cards: []},
+        {id: "finish2", title: 'finish2', cards: []},
+    ]);
 
     const [cardCounter, setCardCounter] = useState(1);
 
     const moveCard = (cardId: string, sourceColumn: string, targetColumn: string) => {
         if (sourceColumn === targetColumn) return;
-
-        const sourceCards = columns[sourceColumn].filter(card => card.id !== cardId);
-        const movedCard = columns[sourceColumn].find(card => card.id === cardId);
-        if (!movedCard) return;
-
-        const targetCards = [...columns[targetColumn], movedCard];
-
-        setColumns({
-            ...columns,
-            [sourceColumn]: sourceCards,
-            [targetColumn]: targetCards,
+        setColumns(prevColumns => {
+            const newColumns = prevColumns.map(column => {
+                if (column.id === sourceColumn){
+                    return {
+                        ...column,
+                        cards: column.cards.filter(card => card.id !== cardId),
+                    };
+                }
+                if (column.id === targetColumn){
+                    const moveCard = prevColumns.find(col => col.id === sourceColumn)?.cards.find( c => c.id === cardId);
+                    return moveCard ? {...column, cards: [...column.cards, moveCard ]} : column;
+                }
+                return column;
+            });
+            return newColumns;
         });
     };
 
     const addCard = (columnId: string) => {
         const newCard: Card = {
             id: `card-${cardCounter}`,
-            content: `New Task ${cardCounter - 0}`
+            content: `New Task ${cardCounter}`,
         };
         
-        setColumns(prev => ({
-            ...prev,
-            [columnId]: [...prev[columnId], newCard]
-        }));
-        
+        setColumns(prevColumns => prevColumns.map(column => (
+            column.id === columnId ? {...column, cards: [...column.cards, newCard]} : column
+        )));
         setCardCounter(prev => prev + 1);
     };
+
+    const boardRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const cleanup = dropTargetForElements({
+            element: boardRef.current!,
+            getData: ({ source })=> ({ fromColumnId: source.data.columnId }),
+            onDrop: ({ source, location }) => {
+                const fromId = source.data.columnId;
+                const beforeId = (location as any)?.data?.columnId;
+                if (!fromId || fromId === beforeId) return;
+                setColumns( prev => {
+                    const moving = prev.find(col => col.id === fromId);
+                    const filtered = prev.filter(col => col.id !== fromId);
+                    const index = beforeId ? filtered.findIndex(col => col.id === beforeId): filtered.length;
+                    if (!moving) return prev;
+                    const newCols = [...filtered.slice(0, index), moving, ...filtered.slice(index)];
+                    return newCols;
+                });
+            },
+        });
+        return () => cleanup();
+    }, []);
 
     return (
         <>
@@ -116,10 +119,10 @@ const BoardPage = () => {
                                 </button>
                             </div>
                         </div>
-                        <div className="board-content">
-                            {Object.entries(columns).map(([columnId, cards]) => (
-                                <DroppableColumn key={columnId} columnId={columnId} cards={cards} moveCard={moveCard} addCard={addCard} />
-                            ))}
+                        <div className="board-content" ref = {boardRef}>
+                            {columns.map(column => (
+                                <DroppableColumn key={column.id} column={column} moveCard={moveCard} addCard={addCard} />
+                            ))} 
                         </div>
                     </div>
                 </div>
@@ -128,37 +131,42 @@ const BoardPage = () => {
     );
 };
 
-const DroppableColumn = ({ columnId, cards, moveCard, addCard }: DroppableColumnProps) => {
+const DroppableColumn = ({ column, moveCard, addCard }: DroppableColumnProps) => {
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const cleanup = dropTargetForElements({
+        const cleanDrop = dropTargetForElements({
             element: ref.current!,
-            getData: () => ({ targetColumn: columnId }),
+            getData: () => ({ targetColumnId: column.id }),
             onDrop: ({ source }) => {
                 const { cardId, sourceColumn } = source.data as { cardId: string; sourceColumn: string };
-                moveCard(cardId, sourceColumn, columnId);
+                if(cardId && sourceColumn) moveCard(cardId, sourceColumn, column.id);
             },
         });
-        return () => cleanup();
-    }, [columnId, moveCard]);
 
-    const AddCard = () => {
-        addCard(columnId);
-    };
+        const cleanDrag = draggable({
+            element: ref.current!,
+            getInitialData: () => ({ columnId: column.id}),
+        });
+
+        return () => {
+            cleanDrop();
+            cleanDrag();
+        } 
+    }, [column.id, moveCard]);
 
     return (
         <div ref={ref} className="board-column">
             <div className="board-object">
-                <h3>{columnId}</h3>
+                <h3>{column.title}</h3>
                 <button className="btn-setting-board-card">...</button>
             </div>
             <div className="board-cards">
-                    {cards.map((card) => (
-                        <DraggableCard key={card.id} card={card} columnId={columnId} />
+                    {column.cards.map((card) => (
+                        <DraggableCard key={card.id} card={card} columnId={column.id} />
                     ))}
             </div>
-            <button className="addbtn-card-collum" onClick={AddCard}>+ add a card</button>                
+            <button className="addbtn-card-collum" onClick={() => addCard(column.id)}>+ add a card</button>                
         </div>
     );
 };
@@ -171,7 +179,6 @@ const DraggableCard = ({ card, columnId }: DraggableCardProps) => {
             element: ref.current!,
             getInitialData: () => ({ cardId: card.id, sourceColumn: columnId }),
         });
-
         return () => cleanup();
     }, [card.id, columnId]);
 

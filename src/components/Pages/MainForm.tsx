@@ -17,15 +17,15 @@ import member from "../Logo/member.png";
 import board from "../Logo/board.png";
 
 const MainForm = () => {
-  // Suggested templates
+  // Основные шаблоны (Suggested)
   const [suggestedShowAll, setSuggestedShowAll] = useState(false);
   const [suggestedIndex, setSuggestedIndex] = useState(0);
 
-  // Starred boards
+  // Избранные доски
   const [starredShowAll, setStarredShowAll] = useState(false);
   const [starredIndex, setStarredIndex] = useState(0);
 
-  // Recently viewed
+  // Недавние доски
   const [recentShowAll, setRecentShowAll] = useState(false);
   const [recentIndex, setRecentIndex] = useState(0);
 
@@ -37,7 +37,6 @@ const MainForm = () => {
   const [selectedWorkspaceImage, setSelectedWorkspaceImage] = useState<string | undefined>(undefined);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null);
 
-  //Навигация на воркспейс
   const navigate = useNavigate();
   const TabClick = (tab: string) => {
     if(selectedWorkspaceId){

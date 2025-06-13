@@ -320,8 +320,6 @@ export async function updateEmail(userId: string, email: string) {
 
 // Методы воркспейса главной странчки
 export async function getUserWorkspace(): Promise<Workspace[]> {
-  const token = localStorage.getItem("authToken");
-
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -354,8 +352,6 @@ export async function getUserWorkspace(): Promise<Workspace[]> {
 }
 
 export async function createWorkspace(data: CreateWorkspaceDto): Promise<Workspace> {
-  const token = localStorage.getItem("authToken");
-
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -378,8 +374,6 @@ export async function createWorkspace(data: CreateWorkspaceDto): Promise<Workspa
 }
 
 export async function updateWorkspace(data: UpdateWorkspaceDto): Promise<Workspace>{
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -401,8 +395,6 @@ export async function updateWorkspace(data: UpdateWorkspaceDto): Promise<Workspa
 }
 
 export async function deleteWorkspace(workspaceId: string): Promise<{message: string}>{
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -423,8 +415,6 @@ export async function deleteWorkspace(workspaceId: string): Promise<{message: st
 }
 
 export async function getWorkspaceById(workspaceId: string): Promise<Workspace>{
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -445,8 +435,6 @@ export async function getWorkspaceById(workspaceId: string): Promise<Workspace>{
 }
 
 export async function getWorkspaceMembers(workspaceId: string): Promise<WorkspaceMemberDto[]> {
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -467,8 +455,6 @@ export async function getWorkspaceMembers(workspaceId: string): Promise<Workspac
 }
 
 export async function updateWorkspaceName(workspaceId: string, name: string): Promise<Workspace> {
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -490,8 +476,6 @@ export async function updateWorkspaceName(workspaceId: string, name: string): Pr
 }
 
 export async function updateWorkspaceVisibility(workspaceId: string, visibility: 'public' | 'private'): Promise<Workspace> {
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -513,8 +497,6 @@ export async function updateWorkspaceVisibility(workspaceId: string, visibility:
 }
 
 export async function uploadWorkspaceImage(workspaceId: string, file: File): Promise<{ success: boolean; imageUrl: string }> {
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -539,8 +521,7 @@ export async function uploadWorkspaceImage(workspaceId: string, file: File): Pro
 }
 
 export async function generateInviteLink(workspaceId: string): Promise<{ inviteLink: string }> {
-  const token = localStorage.getItem("authToken");
-  
+  const token = localStorage.getItem("authToken")
   if (!token) {
     throw new Error("No auth token found");
   }
@@ -561,8 +542,6 @@ export async function generateInviteLink(workspaceId: string): Promise<{ inviteL
 }
 
 export async function joinWorkspaceByToken(inviteToken: string): Promise<{ message: string; workspaceId: string }> {
-  const token = localStorage.getItem("authToken");
-  
   if (!token) {
     throw new Error("No auth token found");
   }

@@ -9,8 +9,8 @@ import pen from "../Logo/pen.png";
 import starlight from "../Logo/starlight.png";
 import blackmember from "../Logo/blackmember.png";
 import zamok from "../Logo/zamok.png"
-import { useLocation, useParams } from "react-router-dom";
-import { getWorkspaceById } from "../Api/api";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { getWorkspaceById, deleteWorkspace } from "../Api/api";
 
 type Template = {
   className: string;
@@ -26,6 +26,7 @@ const WorkspacePage = () => {
   const [activeMemberTab, setActiveMemberTab] = useState("workspace");
 
   const location = useLocation();
+  const navigate = useNavigate();
   const state = location.state as { name?: string; imageUrl?: string } | undefined;
 
   const { workspaceId, tab } = useParams<{ workspaceId: string; tab?: string }>();
@@ -34,16 +35,19 @@ const WorkspacePage = () => {
   const [workspaceName, setWorkspaceName] = useState("Loading...");
   const [workspaceImageUrl, setWorkspaceImageUrl] = useState<string | null>(null);
 
+  
 useEffect(() => {
   async function fetchWorkspace() {
     if (!workspaceId) return;
     try {
+      console.log(workspaceId, "test");
       const data = await getWorkspaceById(workspaceId);
+      console.log(data.name);
       console.log("Workspace data:", data);
       setWorkspaceName(data.name ?? "Unnamed Workspace");
       setWorkspaceImageUrl(data.imageUrl ?? null);
     } catch (error) {
-      console.error("Error fetching workspace:", error);
+      // console.error("Error fetching workspace:", error);
       setWorkspaceName("Workspace not found");
       setWorkspaceImageUrl(null);
     }
@@ -51,6 +55,19 @@ useEffect(() => {
   fetchWorkspace();
 }, [workspaceId]);
 
+  const DeleteWorkspace  = async () => {
+    if(!workspaceId) 
+      return;
+    const confiremDelete = window.confirm("Are you sure you want to delete this workspace?");
+    if(!confirm) 
+      return;
+    try{
+      await deleteWorkspace(workspaceId)
+      navigate("/main");
+    }catch (error: any){
+      console.log(error.message || "failed");
+    }
+  };
 
   const templates: Template[] = [
     { className: "green", label: "Basic Board" },
@@ -273,7 +290,7 @@ useEffect(() => {
         <button className="change-btn">Change</button>
       </div>
 
-      <button className="delete-workspace">Delete this Workspace?</button>
+      <button className="delete-workspace" onClick={DeleteWorkspace}>Delete this Workspace?</button>
     </div>
   </div>
 );

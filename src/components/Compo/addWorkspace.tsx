@@ -81,10 +81,10 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
         setCurrentStep(3);
       } catch (error: unknown) {
         if (error instanceof Error) {
-          alert(error.message);
+          // alert(error.message);
         } else {
           console.error("Error creating workspace:", error);
-          alert("Unexpected error occurred");
+          // alert("Unexpected error occurred");
         }
       } finally {
         setCreating(false);
@@ -106,14 +106,19 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
 
   const copyInviteLink = async () => {
     if (!workspaceId) return;
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error("No auth token");
+      return;
+    }
     try {
       const { inviteLink } = await generateInviteLink(workspaceId);
       setInviteLink(inviteLink);
       await navigator.clipboard.writeText(inviteLink);
-      alert("Link copied!");
+      // alert("Link copied!");
     } catch (err) {
       console.error(err);
-      alert("Failed to copy invite link");
+      // alert("Failed to copy invite link");
     }
   };
 

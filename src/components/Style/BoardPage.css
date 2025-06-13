@@ -132,6 +132,7 @@
   width: 256px;
   max-width: 256px;
   min-height: 120px;
+  max-height: 623px;
   height: fit-content;
 }
 
