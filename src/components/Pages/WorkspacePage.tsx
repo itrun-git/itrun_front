@@ -112,22 +112,26 @@ const WorkspacePage = () => {
     }
   };
 
-  const handleInviteMembers = async () => {
-    if (!workspaceId) return;
-    
-    setIsGeneratingInvite(true);
-    try {
-      const { inviteLink } = await generateInviteLink(workspaceId);
-      setInviteLink(inviteLink);
+const handleInviteMembers = async () => {
+  if (!workspaceId) return;
+  setIsGeneratingInvite(true);
+  try {
+    const { inviteLink } = await generateInviteLink(workspaceId);
+    setInviteLink(inviteLink);
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
       await navigator.clipboard.writeText(inviteLink);
       alert("Invite link copied to clipboard!");
-    } catch (err) {
-      console.error("Error generating invite link:", err);
-      alert("Failed to generate invite link");
-    } finally {
-      setIsGeneratingInvite(false);
+    } else {
+      prompt("Copy this invite link:", inviteLink);
     }
-  };
+  } catch (err) {
+    console.error("Error generating invite link:", err);
+    alert("Failed to generate invite link");
+  } finally {
+    setIsGeneratingInvite(false);
+  }
+};
+
 
   const getWorkspaceInitials = (name: string): string => {
   return name
