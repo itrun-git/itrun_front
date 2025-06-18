@@ -104,23 +104,30 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
     console.log("Image selected:", file.name);
   };
 
-  const copyInviteLink = async () => {
-    if (!workspaceId) return;
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      console.error("No auth token");
-      return;
-    }
-    try {
-      const { inviteLink } = await generateInviteLink(workspaceId);
-      setInviteLink(inviteLink);
+const copyInviteLink = async () => {
+  if (!workspaceId) return;
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    console.error("No auth token");
+    return;
+  }
+
+  try {
+    const { inviteLink } = await generateInviteLink(workspaceId);
+    setInviteLink(inviteLink);
+
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
       await navigator.clipboard.writeText(inviteLink);
-      // alert("Link copied!");
-    } catch (err) {
-      console.error(err);
-      // alert("Failed to copy invite link");
+      console.log("Link copied!");
+    } else {
+      console.warn("Clipboard not available");
+      window.prompt("Скопируйте ссылку вручную:", inviteLink);
     }
-  };
+  } catch (err) {
+    console.error("Failed to copy invite link:", err);
+  }
+};
+
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
