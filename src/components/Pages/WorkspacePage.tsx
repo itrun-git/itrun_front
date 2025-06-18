@@ -112,25 +112,29 @@ const WorkspacePage = () => {
     }
   };
 
-const handleInviteMembers = async () => {
+const InviteMembers = async () => {
   if (!workspaceId) return;
+
   setIsGeneratingInvite(true);
   try {
     const { inviteLink } = await generateInviteLink(workspaceId);
     setInviteLink(inviteLink);
-    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+
+    if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(inviteLink);
-      alert("Invite link copied to clipboard!");
-    } else {
-      prompt("Copy this invite link:", inviteLink);
-    }
-  } catch (err) {
-    console.error("Error generating invite link:", err);
-    alert("Failed to generate invite link");
+      // alert("The link is copied to the clipboard!");
+    } 
+    // else {
+    //    prompt("Скопируй эту ссылку вручную:", inviteLink);
+    // }
+  } catch (error) {
+    console.error("Error generating invite link:", error);
+    // alert("The link could not be generated");
   } finally {
     setIsGeneratingInvite(false);
   }
 };
+
 
 
   const getWorkspaceInitials = (name: string): string => {
@@ -357,7 +361,7 @@ const handleInviteMembers = async () => {
               <div className="und-input-workspace">
                 <input placeholder="Filter by name"/>
                 <h3 className="Disablelink">Disable invite link</h3>
-                <button className="invited-link-btn-workspace-members" onClick={handleInviteMembers} disabled={isGeneratingInvite}>
+                <button className="invited-link-btn-workspace-members" onClick={InviteMembers} disabled={isGeneratingInvite}>
                   {isGeneratingInvite ? "Generating..." : "invite with link"}
                 </button>
               </div>
@@ -376,7 +380,7 @@ const handleInviteMembers = async () => {
               <div className="und-input-workspace">
                 <input placeholder="Filter by name" />
                 <h3 className="Disablelink">Disable invite link</h3>
-                <button className="invited-link-btn-workspace-members" onClick={handleInviteMembers} disabled={isGeneratingInvite}>
+                <button className="invited-link-btn-workspace-members" onClick={InviteMembers} disabled={isGeneratingInvite}>
                   {isGeneratingInvite ? "Generating..." : "invite with link"}
                 </button>
               </div>
@@ -483,7 +487,7 @@ const handleInviteMembers = async () => {
                     <img src={zamok} className="zamok-icon"/> Private
                   </div>
                 </div>
-                <button className="invite-button" onClick={handleInviteMembers} disabled={isGeneratingInvite}>
+                <button className="invite-button" onClick={InviteMembers} disabled={isGeneratingInvite}>
                   <img src={blackmember} className="pen-icon" />
                   {isGeneratingInvite ? "Generating..." : "Invite Members"}
                 </button>
