@@ -111,17 +111,15 @@ const copyInviteLink = async () => {
     console.error("No auth token");
     return;
   }
-
   try {
     const { inviteLink } = await generateInviteLink(workspaceId);
     setInviteLink(inviteLink);
-
     if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
       await navigator.clipboard.writeText(inviteLink);
       console.log("Link copied!");
     } else {
       console.warn("Clipboard not available");
-      window.prompt("Скопируйте ссылку вручную:", inviteLink);
+      window.prompt("Copy link:", inviteLink);
     }
   } catch (err) {
     console.error("Failed to copy invite link:", err);
