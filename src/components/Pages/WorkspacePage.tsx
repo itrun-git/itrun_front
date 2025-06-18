@@ -32,7 +32,6 @@ const WorkspacePage = () => {
   const [boardToDelete, setBoardToDelete] = useState<string | null>(null);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [isGeneratingInvite, setIsGeneratingInvite] = useState(false);
-  const [copied, setCopied] = useState(false);
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -113,24 +112,26 @@ const WorkspacePage = () => {
     }
   };
 
-const InviteMembers = async () => {
-  if (!workspaceId) return;
-  setIsGeneratingInvite(true);
-  try {
-    const { inviteLink } = await generateInviteLink(workspaceId);
-    setInviteLink(inviteLink);
-
-    if (navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(inviteLink);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const InviteMembers = async () => {
+    if (!workspaceId) return;
+    setIsGeneratingInvite(true);
+    try {
+      const { inviteLink } = await generateInviteLink(workspaceId);
+      setInviteLink(inviteLink);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(inviteLink);
+        alert("Link copied to clipboard!");
+      } else {
+        prompt("Copy link", inviteLink);
+      }
+    } catch (err) {
+      console.error("Error generating invite link:", err);
+      alert("Error generate link or login");
+    } finally {
+      setIsGeneratingInvite(false);
     }
-  } catch (error) {
-    console.error("Error generating invite link:", error);
-  } finally {
-    setIsGeneratingInvite(false);
-  }
-};
+  };
+
 
   const getWorkspaceInitials = (name: string): string => {
   return name
