@@ -78,3 +78,54 @@
   font-size: 16px;
   color: #ffd700;
 }
+
+.workspace-avatar-image-left-bar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.workspace-avatar-image-left-bar.hidden {
+  display: none;
+}
+
+.workspace-initials.hidden {
+  display: none;
+}
+
+.board-item-btn-left-bar{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.board-item-btn-left-bar:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.star-icon-left-bar img {
+  width: 18px;
+  height: 18px;
+}
+
+.board-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.board-left-navbar-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.star-icon-left-bar{
+  margin-top: 5px;
+}

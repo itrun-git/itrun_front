@@ -171,6 +171,7 @@
 }
 
 .board-object{
+  position: relative;
   display: flex;
   min-height: 32px;
   align-items: center;
@@ -200,4 +201,108 @@
 .addbtn-card-collum:hover{
   border-color: transparent;
   background-color: rgb(44, 44, 44);
+}
+
+/* новая колонка*/
+.create-column-btn {
+  min-width: 256px;
+  height: 120px;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-radius: 32px;
+  color: #30CFCF;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+}
+
+.create-column-btn:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #30CFCF;
+  color: #14b8a6;
+}
+
+.column-menu {
+  background: rgba(44, 51, 58, 0.95);
+  border: 1px solid #14b8a6;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  padding: 8px 0;
+  min-width: 120px;
+  backdrop-filter: blur(10px);
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 1000;
+}
+
+.column-menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #30CFCF;
+  transition: background-color 0.2s ease;
+}
+
+.column-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.column-menu-delete {
+  color: #ff6b6b;
+}
+
+.column-menu-delete:hover {
+  background-color: rgba(255, 107, 107, 0.1);
+}
+
+.column-rename-container {
+  flex: 1;
+}
+
+.column-rename-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  background: white;
+  outline: none;
+}
+
+.column-rename-input:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-size: 16px;
+  color: #666;
+}
+
+.error-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  font-size: 16px;
+  color: #dc3545;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  margin: 20px;
 }

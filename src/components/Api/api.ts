@@ -1,4 +1,5 @@
 const API_URL = 'http://147.135.210.93:3002/api';
+//const API_URL = 'http://localhost:3002/api';
 const token = localStorage.getItem("authToken");
 
 export enum UserPurpose {
@@ -71,6 +72,38 @@ export interface UpdateWorkspaceDto {
   name: string;
 }
 
+//Интрефейсы борда
+export interface Board {
+  id: string;
+  name: string;
+  className?: string;
+  label: string;
+  isStarred: boolean;
+  workspaceId?: string;
+  imageUrl?: string;
+}
+
+export interface CreateBoardResponse {
+  id: string;
+  className: string;
+  label: string;
+  isStarred: boolean;
+  workspaceId?: string;
+  imageUrl?: string;
+}
+
+export interface CreateBoardResponse {
+  id: string;
+  name: string;
+  imageUrl?: string;
+}
+
+export interface WorkspaceData {
+  id: string;
+  name: string;
+  imageUrl?: string;
+}
+
 export async function checkEmail(email: string): Promise<{ available: boolean }> {
     const response = await fetch(`${API_URL}/auth/check-email`, {
     method: 'POST',
@@ -87,7 +120,6 @@ export async function registerUser(data: CreateUserDto): Promise<User> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-
   if (!response.ok) {
     const err = await response.json();
     throw new Error(err.message || 'Ошибка регистрации');
@@ -116,7 +148,6 @@ export async function sendVerificationEmail(userId: string): Promise<void> {
     },
     body: JSON.stringify({ userId }),
   });
-
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Failed to send verification email');
@@ -152,37 +183,34 @@ export async function getAllUsers(): Promise<User[]> {
   }));
 }
 
-  export async function getUserById(id: string): Promise<User> {
-    const response = await fetch(`${API_URL}/user/${id}`, {
-      method: 'GET',
-    });
-    if (!response.ok) throw new Error('Failed to fetch user');
-    return response.json();
+export async function getUserById(id: string): Promise<User> {
+  const response = await fetch(`${API_URL}/user/${id}`, {
+    method: 'GET',
+  });
+  if (!response.ok) throw new Error('Failed to fetch user');
+  return response.json();
 }
 
 export async function deleteUserById(id: string): Promise<{ message: string }> {
-    const response = await fetch(`${API_URL}/user/${id}`, {
-      method: 'DELETE',
-    });
-    if (!response.ok) throw new Error('Failed to delete user');
-    return response.json();
+  const response = await fetch(`${API_URL}/user/${id}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) throw new Error('Failed to delete user');
+  return response.json();
 }
 
 export async function uploadAvatar(file: File, userId: string): Promise<User> {
-    const formData = new FormData();
-    formData.append('avatar', file);
-    formData.append('userId', userId);
-
-    const response = await fetch(`${API_URL}/auth/upload-avatar`, {
+  const formData = new FormData();
+  formData.append('avatar', file);
+  formData.append('userId', userId);
+  const response = await fetch(`${API_URL}/auth/upload-avatar`, {
     method: 'PATCH', 
     body: formData,
   });
-
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to upload avatar');
   }
-
   return response.json();
 }
 
@@ -214,7 +242,6 @@ export async function changeUserEmail(currentEmail: string, newEmail: string) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to change email');
   }
-
   return await response.json();
 }
 
@@ -232,11 +259,9 @@ export async function getUserFullName(token: string): Promise<{ fullName: string
     const errorText = await response.text();
     throw new Error(errorText || 'Failed to get user full name');
   }
-
   const text = await response.text();
   return { fullName: text }; 
 }
-
 
 export async function getUserEmail(token: string): Promise<{ email: string }> {
   const response = await fetch(`${API_URL}/user/email`, {
@@ -310,11 +335,9 @@ export async function updateEmail(userId: string, email: string) {
     },
     body: JSON.stringify({ newEmail: email }),
   });
-
   if (!response.ok) {
     throw new Error('Failed to update email');
   }
-
   return await response.json();
 }
 
@@ -323,7 +346,6 @@ export async function getUserWorkspace(): Promise<Workspace[]> {
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch(`${API_URL}/user/workspaces`, {
     method: 'GET',
     headers: {
@@ -331,18 +353,14 @@ export async function getUserWorkspace(): Promise<Workspace[]> {
       'Content-Type': 'application/json',
     },
   });
-
   if (response.status === 404) {
     return [];
   }
-
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || "No workspaces found for this user");
   }
-
   const workspaces = await response.json();
-
   return workspaces.map((w: any) => ({
     ...w,
     imageUrl: w.imageUrl 
@@ -355,7 +373,6 @@ export async function createWorkspace(data: CreateWorkspaceDto): Promise<Workspa
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const res = await fetch(`${API_URL}/workspace`, {
     method: "POST",
     headers: {
@@ -364,12 +381,10 @@ export async function createWorkspace(data: CreateWorkspaceDto): Promise<Workspa
     },
     body: JSON.stringify(data),
   });
-
   if (!res.ok) {
     const error = await res.json();
     throw new Error(error.message || "Failed to create workspace");
   }
-
   return res.json();
 }
 
@@ -377,7 +392,6 @@ export async function updateWorkspace(data: UpdateWorkspaceDto): Promise<Workspa
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch (`${API_URL}/workspace/${data.id}/members` , {
     method: 'PATCH',
     headers: {
@@ -386,7 +400,6 @@ export async function updateWorkspace(data: UpdateWorkspaceDto): Promise<Workspa
     },
     body: JSON.stringify({name: data.name}),
   });
-
   if (!response.ok){
     const error = await response.json();
     throw new Error(error.message || 'Failed to update workspace');
@@ -398,7 +411,6 @@ export async function deleteWorkspace(workspaceId: string): Promise<{message: st
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch (`${API_URL}/workspace/${workspaceId}` , {
     method: 'DELETE',
     headers: {
@@ -406,7 +418,6 @@ export async function deleteWorkspace(workspaceId: string): Promise<{message: st
       'Content-Type' : 'application/json',
     },
   });
-
   if (!response.ok){
     const error = await response.json();
     throw new Error(error.message || 'Failed to delete workspace');
@@ -418,7 +429,6 @@ export async function getWorkspaceById(workspaceId: string): Promise<Workspace>{
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch (`${API_URL}/workspace/${workspaceId}` , {
     method: 'GET',
     headers: {
@@ -426,7 +436,6 @@ export async function getWorkspaceById(workspaceId: string): Promise<Workspace>{
       'Content-Type' : 'application/json',
     },
   });
-
   if (!response.ok){
     const error = await response.json();
     throw new Error(error.message || 'Failed to get workspace');
@@ -438,7 +447,6 @@ export async function getWorkspaceMembers(workspaceId: string): Promise<Workspac
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch(`${API_URL}/workspace/${workspaceId}/members`, {
     method: 'GET',
     headers: {
@@ -446,7 +454,6 @@ export async function getWorkspaceMembers(workspaceId: string): Promise<Workspac
       'Content-Type': 'application/json',
     },
   });
-
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Failed to get members');
@@ -458,7 +465,6 @@ export async function updateWorkspaceName(workspaceId: string, name: string): Pr
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch(`${API_URL}/workspace/${workspaceId}/name`, {
     method: 'PATCH',
     headers: {
@@ -467,7 +473,6 @@ export async function updateWorkspaceName(workspaceId: string, name: string): Pr
     },
     body: JSON.stringify({ name }),
   });
-
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Failed to update workspace name');
@@ -479,7 +484,6 @@ export async function updateWorkspaceVisibility(workspaceId: string, visibility:
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch(`${API_URL}/workspace/${workspaceId}/visibility`, {
     method: 'PATCH',
     headers: {
@@ -488,7 +492,6 @@ export async function updateWorkspaceVisibility(workspaceId: string, visibility:
     },
     body: JSON.stringify({ visibility }),
   });
-
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Failed to update visibility');
@@ -500,10 +503,8 @@ export async function uploadWorkspaceImage(workspaceId: string, file: File): Pro
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const formData = new FormData();
   formData.append('image', file);
-
   const response = await fetch(`${API_URL}/workspace/${workspaceId}/image`, {
     method: 'PATCH',
     headers: {
@@ -511,12 +512,10 @@ export async function uploadWorkspaceImage(workspaceId: string, file: File): Pro
     },
     body: formData,
   });
-
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || 'Failed to upload avatar');
   }
-
   return response.json();
 }
 
@@ -525,7 +524,6 @@ export async function generateInviteLink(workspaceId: string): Promise<{ inviteL
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch(`${API_URL}/workspace/${workspaceId}/invite-link`, {
     method: 'GET',
     headers: {
@@ -533,7 +531,6 @@ export async function generateInviteLink(workspaceId: string): Promise<{ inviteL
       'Content-Type': 'application/json',
     },
   });
-
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Failed to generate invite link');
@@ -545,7 +542,6 @@ export async function joinWorkspaceByToken(inviteToken: string): Promise<{ messa
   if (!token) {
     throw new Error("No auth token found");
   }
-
   const response = await fetch(`${API_URL}/workspace/join`, {
     method: 'POST',
     headers: {
@@ -554,10 +550,361 @@ export async function joinWorkspaceByToken(inviteToken: string): Promise<{ messa
     },
     body: JSON.stringify({ token: inviteToken }),
   });
-
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Failed to join workspace');
+  }
+  return response.json();
+}
+
+//Методы борда 
+export async function createBoard(workspaceId: string, name: string, imageFile?: File): Promise<CreateBoardResponse> {
+  if (!token) throw new Error("No auth token found");
+  const formData = new FormData();
+  formData.append("name", name);
+  if (imageFile) {
+    formData.append("image", imageFile);
+  }
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to create board: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function getBoards(workspaceId: string): Promise<Board[]> {
+  if (!token) throw new Error("No auth token found");
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to fetch boards: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export const getBoardById = async (workspaceId: string, boardId: string) => {
+  console.log('getBoardById called with:', { workspaceId, boardId });
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No auth token found');
+    }
+    const url = `${API_URL}/workspace/${workspaceId}/board/${boardId}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error response:', errorData);
+      throw new Error(`Failed to fetch board: ${response.status} ${JSON.stringify(errorData)}`);
+    }
+    const boardData = await response.json();
+    console.log('Board data received:', boardData);
+    return boardData;
+  } catch (error) {
+    console.error('getBoardById error:', error);
+    throw error;
+  }
+};
+
+export async function updateBoard(boardId: string, data: { name?: string, imageFile?: File }): Promise<Board> {
+  if (!token) throw new Error("No auth token found");
+  const formData = new FormData();
+  if (data.name) formData.append("name", data.name);
+  if (data.imageFile) formData.append("image", data.imageFile);
+  const response = await fetch(`${API_URL}/boards/${boardId}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to update board: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function getFavoriteBoards(): Promise<Board[]> {
+  if (!token) throw new Error("No auth token found");
+  const response = await fetch(`${API_URL}/boards/favorites`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to get favorite boards: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function addBoardToFavorites(boardId: string): Promise<void> {
+  if (!token) throw new Error("No auth token found");
+  const response = await fetch(`${API_URL}/boards/${boardId}/favorite`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to add board to favorites: ${response.status} ${errorText}`);
+  }
+}
+
+export async function removeBoardFromFavorites(boardId: string): Promise<void> {
+  if (!token) throw new Error("No auth token found");
+  const response = await fetch(`${API_URL}/boards/${boardId}/favorite`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to remove board from favorites: ${response.status} ${errorText}`);
+  }
+}
+
+export async function getRecentBoards(): Promise<Board[]> {
+  if (!token) throw new Error("No auth token found");
+  const response = await fetch(`${API_URL}/boards/recent`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to fetch recent boards: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function getUserBoards(): Promise<Board[]> {
+  if (!token) throw new Error("No auth token found");
+  const response = await fetch(`${API_URL}/user/boards`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to fetch user boards: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function getWorkspaceBoards(workspaceId: string): Promise<Board[]> {
+  return getBoards(workspaceId);
+}
+
+export async function getBoardByIdDelete (boardId: string): Promise<void> {
+  if(!token) throw new Error ("No auth token found");
+  const response = await fetch(`${API_URL}/boards/${boardId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(`Faild to delete board: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+//Column api (апи для работы с колонками)
+export async function CreateColumn(workspaceId: string, boardId: string, data: {title: string}){
+  if(!token) throw new Error ("No auth token found");
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board/${boardId}/column`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(`Faild to create column: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function getColumns(workspaceId: string, boardId: string){
+  if(!token) throw new Error ("No auth token found");
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board/${boardId}/column`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(`Faild to fetch columns: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function updateColumn(workspaceId: string, boardId: string, columnId: string, data: {title: string}){
+  if(!token) throw new Error ("No auth token found");
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board/${boardId}/column/${columnId}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+  if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(`Faild to update column: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function deleteColumn(workspaceId: string, boardId: string, columnId: string){
+  if(!token) throw new Error ("No auth token found");
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board/${boardId}/column/${columnId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(`Faild to delete column: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function moveColumn(workspaceId: string, boardId: string, columnId: string, newPosition: number){
+  if(!token) throw new Error ("No auth token found");
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board/${boardId}/column/${columnId}/move`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ newPosition }),
+  });
+  if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(`Faild to move column: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+export async function copyColumn(workspaceId: string, boardId: string, columnId: string){
+  if(!token) throw new Error ("No auth token found");
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/board/${boardId}/column/${columnId}/copy`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if(!response.ok){
+    const errorText = await response.text();
+    throw new Error(`Faild to create column: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+
+// Добавьте эти интерфейсы в ваш файл api.ts
+
+export interface WorkspaceGuest {
+  id: string;
+  fullName: string;
+  email: string;
+  avatarUrl: string | null;
+  role: 'guest' | 'member' | 'admin';
+  joinedAt: string;
+}
+
+// Добавьте эти методы в api.ts
+
+export async function getWorkspaceGuests(workspaceId: string): Promise<WorkspaceGuest[]> {
+  if (!token) {
+    throw new Error("No auth token found");
+  }
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/guests`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to get workspace guests');
+  }
+  return response.json();
+}
+
+export async function removeWorkspaceGuest(workspaceId: string, userId: string): Promise<{ message: string }> {
+  if (!token) {
+    throw new Error("No auth token found");
+  }
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/guests/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to remove guest');
+  }
+  return response.json();
+}
+
+export async function getUserRole(workspaceId: string): Promise<{ role: 'guest' | 'member' | 'admin' }> {
+  if (!token) {
+    throw new Error("No auth token found");
+  }
+  const response = await fetch(`${API_URL}/workspace/${workspaceId}/user-role`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to get user role');
   }
   return response.json();
 }

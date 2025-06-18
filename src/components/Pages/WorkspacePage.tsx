@@ -6,11 +6,14 @@ import LogoIcon from "../Logo/LogoIcon.png";
 import leftarrow from "../Logo/leftarrow.png";
 import rightarrow from "../Logo/rightarrow.png";
 import pen from "../Logo/pen.png";
+import star from "../Logo/star.png";
+import delet from "../Logo/exit.png"
 import starlight from "../Logo/starlight.png";
 import blackmember from "../Logo/blackmember.png";
 import zamok from "../Logo/zamok.png"
+import AddBoardModal from '../Compo/addBoard';
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { getWorkspaceById, deleteWorkspace } from "../Api/api";
+import { getUserWorkspace, deleteWorkspace, getWorkspaceBoards, getFavoriteBoards, addBoardToFavorites, removeBoardFromFavorites, getBoardByIdDelete, generateInviteLink, Board } from "../Api/api";
 
 type Template = {
   className: string;
@@ -23,8 +26,13 @@ const WorkspacePage = () => {
   const [suggestedShowAll, setSuggestedShowAll] = useState(false);
   const [suggestedIndex, setSuggestedIndex] = useState(0);
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [activeMemberTab, setActiveMemberTab] = useState("workspace");
-
+  const [activeMemberTab, ActiveMemberTab] = useState("workspace");
+  const [showAddBoardModal, ShowAddBoardModal] = useState(false);
+  const [workspaceBoards, WorkspaceBoards] = useState<Board[]>([]);
+  const [boardToDelete, setBoardToDelete] = useState<string | null>(null);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [isGeneratingInvite, setIsGeneratingInvite] = useState(false);
+  
   const location = useLocation();
   const navigate = useNavigate();
   const state = location.state as { name?: string; imageUrl?: string } | undefined;
@@ -35,21 +43,120 @@ const WorkspacePage = () => {
   const [workspaceName, setWorkspaceName] = useState("Loading...");
   const [workspaceImageUrl, setWorkspaceImageUrl] = useState<string | null>(null);
 
-  
-useEffect(() => {
+    const staticSuggestedBoards: Board[] = [
+    { id: 'template-1', className: 'green', label: 'Project Management', isStarred: false, name: ''},
+    { id: 'template-2', className: 'blue', label: 'Team Collaboration', isStarred: false, name: '' },
+    { id: 'template-3', className: 'darkblue', label: 'Marketing Campaign', isStarred: false, name: ''},
+    { id: 'template-4', className: 'purple', label: 'Product Development', isStarred: false, name: '' },
+    { id: 'template-5', className: 'navy', label: 'Content Planning', isStarred: false, name: '' },
+    { id: 'template-6', className: 'olive', label: 'Event Management', isStarred: false, name: '' },
+    { id: 'template-7', className: 'maroon', label: 'Client Relations', isStarred: false, name: '' },
+    { id: 'template-8', className: 'green', label: 'Design Sprint', isStarred: false, name: '' },
+  ];
+
+  const loadWorkspaceBoard = async (workspaceId: string) => {
+    try{
+      const boards = await getWorkspaceBoards(workspaceId);
+      const favoriteData = await getFavoriteBoards();
+      const workspaceTemplates = JSON.parse(localStorage.getItem(`workspaceTemplates_${workspaceId}`) || `[]`);
+      const templateBoards = staticSuggestedBoards.filter(template => workspaceTemplates.includes(template.id));
+      const boardsWithStars = [...boards, ...templateBoards].map(board => ({
+        ...board,
+        isStarred: favoriteData.some(fav => fav.id === board.id) || JSON.parse(localStorage.getItem('favoriteTemplates') || '[]').includes(board.id)
+      }));
+      WorkspaceBoards(boardsWithStars);
+    } catch (err) {
+      console.error('Error loading workspace boards', err);
+      WorkspaceBoards([]);
+    }
+  };
+
+  const toggleWorkspaceFavorite = async (index: number) => {
+    const board = workspaceBoards[index];
+    if (board.id.startsWith('template-')) {
+      const favoriteTemplates = JSON.parse(localStorage.getItem('favoriteTemplates') || '[]');
+      if (favoriteTemplates.includes(board.id)) {
+        const updatedTemplates = favoriteTemplates.filter((id: string) => id !== board.id);
+        localStorage.setItem('favoriteTemplates', JSON.stringify(updatedTemplates));
+        WorkspaceBoards(prev => prev.map((b, i) => i === index ? { ...b, isStarred: false } : b));
+      } else {
+        favoriteTemplates.push(board.id);
+        localStorage.setItem('favoriteTemplates', JSON.stringify(favoriteTemplates));
+        WorkspaceBoards(prev => prev.map((b, i) => i === index ? { ...b, isStarred: true } : b));
+      }
+    } else {
+      try {
+        if (board.isStarred) {
+          await removeBoardFromFavorites(board.id);
+          WorkspaceBoards(prev => prev.map((b, i) => i === index ? { ...b, isStarred: false } : b));
+        } else {
+          await addBoardToFavorites(board.id);
+          WorkspaceBoards(prev => prev.map((b, i) => i === index ? { ...b, isStarred: true } : b));
+        }
+      } catch (err) {
+        console.error('Error toggling workspace favorite:', err);
+      }
+    }
+  };
+
+  const DeleteBoard = async (boardId: string) => {
+    const confirmDelete = window.confirm("Are you sure to delete this board?");
+    if (!confirmDelete) return;
+    try{
+      await getBoardByIdDelete(boardId);
+      WorkspaceBoards(prev => prev.filter(board => board.id !== boardId));
+      console.log("Board deleted successfully");
+    }catch(error: any){
+      console.error("Error delete board:", error);
+      alert(error.message || "Failde to delete");
+    }
+  };
+
+  const handleInviteMembers = async () => {
+    if (!workspaceId) return;
+    
+    setIsGeneratingInvite(true);
+    try {
+      const { inviteLink } = await generateInviteLink(workspaceId);
+      setInviteLink(inviteLink);
+      await navigator.clipboard.writeText(inviteLink);
+      alert("Invite link copied to clipboard!");
+    } catch (err) {
+      console.error("Error generating invite link:", err);
+      alert("Failed to generate invite link");
+    } finally {
+      setIsGeneratingInvite(false);
+    }
+  };
+
+  const getWorkspaceInitials = (name: string): string => {
+  return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
+  };
+
+  const handleBoardCreated = () => {
+    if (workspaceId) {
+      loadWorkspaceBoard(workspaceId);
+    }
+  };
+
+  useEffect(() => {
   async function fetchWorkspace() {
     if (!workspaceId) return;
     try {
-      console.log(workspaceId, "test");
-      const data = await getWorkspaceById(workspaceId);
-      console.log(data.name);
-      console.log("Workspace data:", data);
-      setWorkspaceName(data.name ?? "Unnamed Workspace");
-      setWorkspaceImageUrl(data.imageUrl ?? null);
+      const workspaces = await getUserWorkspace();
+      const currentWorkspace = workspaces.find(ws => ws.id === workspaceId);
+      if (currentWorkspace) {
+        setWorkspaceName(currentWorkspace.name ?? "Unnamed Workspace");
+        setWorkspaceImageUrl(currentWorkspace.imageUrl ?? null);
+        loadWorkspaceBoard(workspaceId);
+      }
     } catch (error) {
-      // console.error("Error fetching workspace:", error);
+      console.error("Error fetching workspace:", error);
       setWorkspaceName("Workspace not found");
-      setWorkspaceImageUrl(null);
     }
   }
   fetchWorkspace();
@@ -128,12 +235,10 @@ useEffect(() => {
         <div className="template-section">
           <div className={`template-scroll ${showAll ? "expanded" : ""} ${isRecent ? "recent-boards" : ""}`}>
             {visibleBoards.map((board, index) => (
-              <div
-                key={`${sectionKey}-${index}`}
-                className={`template-card-workspace ${board.className} ${
+              <div key={`${sectionKey}-${index}`} className={`template-card-workspace ${board.className} ${
                   !showAll && index === 3 ? "faded" : ""
                 } ${board.isCreateNew ? "create-new-card" : ""}`}
-                onClick={() => board.isCreateNew ? createNewBoard() : openTemplateWindow(board.label)}>
+                onClick={() => board.isCreateNew ? ShowAddBoardModal(true) : openTemplateWindow(board.label)}>
                 <div className="card-content">
                   {board.label || "Board"}
                   {board.hasIcon && <span className="star-icon"><img src={starlight}></img></span>}
@@ -166,19 +271,12 @@ useEffect(() => {
       </div>
     );
   };
-
   const openTemplateWindow = (label?: string) => {
     if (label) setSelectedTemplate(label);
   };
-
   const closeTemplateWindow = () => {
     setSelectedTemplate(null);
   };
-
-  const createNewBoard = () => {
-    console.log("Creating new board...");
-  };
-
   const renderBoardsContent = () => (
     <>
       <div className="suggested-templates">
@@ -189,46 +287,61 @@ useEffect(() => {
           </div>
         </div>
         <p className="subtext">Get going faster with a template from itRun community</p>
-          
         <BoardSection title="" boards={templates} currentIndex={suggestedIndex} showAll={suggestedShowAll}
           onToggleShowAll={() => setSuggestedShowAll(!suggestedShowAll)}
           onLeft={() => scrollByArrow(-1, suggestedIndex, setSuggestedIndex, templates.length)}
           onRight={() => scrollByArrow( 1, suggestedIndex, setSuggestedIndex, templates.length)}
           sectionKey="suggested"/>
       </div>
-
-      <div className="recent-boards-section">
+       {/* Реальные доски */}
+      <div className="workspace-boards-section">
         <div className="filter-section">
           <select className="filter-dropdown">
             <option>Most recently active</option>
-            <option>Alphabetical</option>
-            <option>Recently created</option>
+            <option>TEST1</option>
+            <option>TEST2</option>
           </select>
           <input type="text" placeholder="Search" className="search-input"/>
         </div>
-
-        <BoardSection
-          title=""
-          boards={recentBoards}
-          currentIndex={0}
-          showAll={true}
-          onToggleShowAll={() => {}}
-          onLeft={() => {}}
-          onRight={() => {}}
-          sectionKey="recent"
-          isRecent={true}/>
+        <div className="workspace-content">
+          {workspaceBoards.map((board, index) => (
+            <div className="board-item-workspace" key={board.id}>
+              <div className={`board-preview ${board.className || 'basic-board'}`}>
+                {board.imageUrl && (
+                  <img src={board.imageUrl} alt={board.label || board.name} />
+                )}
+                <span className="star-icon" onClick={() => toggleWorkspaceFavorite(index)}>
+                  <img src={board.isStarred ? starlight : star} alt="Star" />
+                </span>
+              </div>
+              <div className="board-info-workspace">
+                <span className="board-name-workspace">{board.label || board.name}</span>
+                {!board.id.startsWith('template') && (
+                  <button className="delete-board-btn" onClick={(e) => { e.stopPropagation(); DeleteBoard(board.id);}}title="Delete board">
+                    <img src={delet}></img>
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+          <div className="board-item create-new" onClick={() => ShowAddBoardModal(true)}>
+            <div className="board-preview create-board">
+              <span className="plus-icon">+</span>
+            </div>
+            <span className="board-name">Create new board</span>
+          </div>
+        </div>
       </div>
     </>
   );
-
   const renderMembersContent = () => (
     <div className="members-view">
       <h2>Collaborators</h2>
       <div className="collab-layout">
         <div className="navbar-colabolators-btn">
-          <button className={`nvb-cln-btn ${activeMemberTab === "workspace" ? "active" : ""}`} onClick={() => setActiveMemberTab("workspace")}>Workspace members</button>
-          <button className={`nvb-cln-btn ${activeMemberTab === "guest" ? "active" : ""}`} onClick={() => setActiveMemberTab("guest")}>Guest</button>
-          <button className={`nvb-cln-btn ${activeMemberTab === "requests" ? "active" : ""}`} onClick={() => setActiveMemberTab("requests")}>Join request</button>
+          <button className={`nvb-cln-btn ${activeMemberTab === "workspace" ? "active" : ""}`} onClick={() => ActiveMemberTab("workspace")}>Workspace members</button>
+          <button className={`nvb-cln-btn ${activeMemberTab === "guest" ? "active" : ""}`} onClick={() => ActiveMemberTab("guest")}>Guest</button>
+          <button className={`nvb-cln-btn ${activeMemberTab === "requests" ? "active" : ""}`} onClick={() => ActiveMemberTab("requests")}>Join request</button>
         </div>
         <div className="workspace-members-colabolators">
           {activeMemberTab === "workspace" && (
@@ -238,9 +351,11 @@ useEffect(() => {
               <h2>Workspace members</h2>
               <h3 className="und-workspace">workspace</h3>
               <div className="und-input-workspace">
-                <input placeholder="Filter by name" />
+                <input placeholder="Filter by name"/>
                 <h3 className="Disablelink">Disable invite link</h3>
-                <button className="invited-link-btn-workspace-members">invite with link</button>
+                <button className="invited-link-btn-workspace-members" onClick={handleInviteMembers} disabled={isGeneratingInvite}>
+                  {isGeneratingInvite ? "Generating..." : "invite with link"}
+                </button>
               </div>
             </>
           )}
@@ -257,7 +372,9 @@ useEffect(() => {
               <div className="und-input-workspace">
                 <input placeholder="Filter by name" />
                 <h3 className="Disablelink">Disable invite link</h3>
-                <button className="invited-link-btn-workspace-members">invite with link</button>
+                <button className="invited-link-btn-workspace-members" onClick={handleInviteMembers} disabled={isGeneratingInvite}>
+                  {isGeneratingInvite ? "Generating..." : "invite with link"}
+                </button>
               </div>
               <div className="request-header-controls">
                   <label className="select-all-label">
@@ -362,16 +479,15 @@ useEffect(() => {
                     <img src={zamok} className="zamok-icon"/> Private
                   </div>
                 </div>
-                <button className="invite-button">
-                  <img src={blackmember} className="pen-icon" />Invite Members
+                <button className="invite-button" onClick={handleInviteMembers} disabled={isGeneratingInvite}>
+                  <img src={blackmember} className="pen-icon" />
+                  {isGeneratingInvite ? "Generating..." : "Invite Members"}
                 </button>
               </div>
-
               <div className="tab-content">
                 {renderActiveContent()}
               </div>
             </div>
-
             {selectedTemplate && (
               <div className="template-window">
                 <div className="template-window-content">
@@ -382,6 +498,9 @@ useEffect(() => {
                   <p>This is a detailed description for the selected template.</p>
                 </div>
               </div>
+            )}
+            {showAddBoardModal && workspaceId && (
+              <AddBoardModal workspaceId={workspaceId} onClose={() => ShowAddBoardModal(false)}onBoardCreated={handleBoardCreated} />
             )}
           </div>
         </div>

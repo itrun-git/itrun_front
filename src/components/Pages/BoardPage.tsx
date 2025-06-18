@@ -23,6 +23,8 @@ type DroppableColumnProps = {
     column: Column;
     moveCard: (cardId: string, sourceColumnId: string, targetColumnId: string) => void;
     addCard: (columnId: string) => void;
+    deleteColumn: (columnId: string) => void;
+    renameColumn: (columnId: string, newTitle: string) => void;
 };
 
 type DraggableCardProps = {
@@ -36,12 +38,10 @@ const BoardPage = () => {
         {id: "InProgress", title: 'InProgress', cards: []},
         {id: "done", title: 'done', cards: []},
         {id: "todo", title: 'todo', cards: []},
-        {id: "finish", title: 'finish', cards: []},
-        {id: "finish1", title: 'finish1', cards: []},
-        {id: "finish2", title: 'finish2', cards: []},
     ]);
 
     const [cardCounter, setCardCounter] = useState(1);
+    const [columnCounter, setColumnCounter] = useState(5);
 
     const moveCard = (cardId: string, sourceColumn: string, targetColumn: string) => {
         if (sourceColumn === targetColumn) return;
@@ -73,6 +73,24 @@ const BoardPage = () => {
             column.id === columnId ? {...column, cards: [...column.cards, newCard]} : column
         )));
         setCardCounter(prev => prev + 1);
+    };
+
+    const addColumn = () => {
+        const newColumn: Column = {
+            id: `column-${columnCounter}`,
+            title: `New column ${columnCounter}`,
+            cards: []
+        };
+        setColumns(prevColumns => [...prevColumns, newColumn]);
+        setColumnCounter(prev => prev + 1);
+    };
+
+    const deleteColumn = (columnId: string) => {
+        setColumns(prevColumns => prevColumns.filter(column => column.id !== columnId));
+    };
+
+    const renameColumn = (columnId: string, newTitle: string) => {
+        setColumns(prevColumns => prevColumns.map(column => column.id === columnId ? {...column, title: newTitle}: column));
     };
 
     const boardRef = useRef<HTMLDivElement>(null);
@@ -120,9 +138,10 @@ const BoardPage = () => {
                             </div>
                         </div>
                         <div className="board-content" ref = {boardRef}>
-                            {columns.map(column => (
-                                <DroppableColumn key={column.id} column={column} moveCard={moveCard} addCard={addCard} />
-                            ))} 
+                            {columns.map(column => (<DroppableColumn key={column.id} column={column} moveCard={moveCard} addCard={addCard} deleteColumn={deleteColumn} renameColumn={renameColumn}/>))}
+                            <button className="create-column-btn" onClick={addColumn}>
+                                + Add new column
+                            </button> 
                         </div>
                     </div>
                 </div>
@@ -131,8 +150,11 @@ const BoardPage = () => {
     );
 };
 
-const DroppableColumn = ({ column, moveCard, addCard }: DroppableColumnProps) => {
+const DroppableColumn = ({ column, moveCard, addCard, deleteColumn, renameColumn }: DroppableColumnProps) => {
     const ref = useRef<HTMLDivElement>(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isRenaming, setIsRenaming] = useState(false);
+    const [newTitle, setNewTitle] = useState(column.title);
 
     useEffect(() => {
         const cleanDrop = dropTargetForElements({
@@ -155,16 +177,60 @@ const DroppableColumn = ({ column, moveCard, addCard }: DroppableColumnProps) =>
         } 
     }, [column.id, moveCard]);
 
-    return (
+    const handleRename = () => {
+        if (newTitle.trim() && newTitle !== column.title) {
+            renameColumn(column.id, newTitle.trim());
+        }
+        setIsRenaming(false);
+        setIsMenuOpen(false);
+    };
+
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleRename();
+        } else if (e.key === 'Escape') {
+            setNewTitle(column.title);
+            setIsRenaming(false);
+        }
+    };
+
+    const handleDelete = () => {
+        if (window.confirm(`Are you sure you want to delete "${column.title}" column?`)) {
+            deleteColumn(column.id);
+        }
+        setIsMenuOpen(false);
+    };
+
+     return (
         <div ref={ref} className="board-column">
             <div className="board-object">
-                <h3>{column.title}</h3>
-                <button className="btn-setting-board-card">...</button>
+                {isRenaming ? (
+                    <div className="column-rename-container">
+                        <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} onBlur={handleRename} onKeyDown={handleKeyPress} className="column-rename-input" autoFocus />
+                    </div>
+                ) : (
+                    <h3>{column.title}</h3>
+                )}
+                <div>
+                    <button  className="btn-setting-board-card" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                        ...
+                    </button>
+                    {isMenuOpen && (
+                        <div className="column-menu">
+                            <button className="column-menu-item" onClick={() => { setIsRenaming(true); setIsMenuOpen(false);}}>
+                                Rename
+                            </button>
+                            <button className="column-menu-item column-menu-delete" onClick={handleDelete} >
+                                Delete
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
             <div className="board-cards">
-                    {column.cards.map((card) => (
-                        <DraggableCard key={card.id} card={card} columnId={column.id} />
-                    ))}
+                {column.cards.map((card) => (
+                    <DraggableCard key={card.id} card={card} columnId={column.id} />
+                ))}
             </div>
             <button className="addbtn-card-collum" onClick={() => addCard(column.id)}>+ add a card</button>                
         </div>

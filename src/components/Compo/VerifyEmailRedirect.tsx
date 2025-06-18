@@ -10,26 +10,22 @@ const VerifyEmailRedirect: React.FC = () => {
 
 useEffect(() => {
   console.log("token from URL:", token); 
-
   if (!token) {
-    navigate("/login");
+    navigate("/mainform");
     return;
   }
-
   confirmEmail(token)
     .then(() => {
       console.log("Email confirmed");
       // alert("Email успешно подтверждён! Теперь можно войти.");
-      navigate("/login");
+      navigate("/mainform");
     })
     .catch((err) => {
       console.log("Ошибка при подтверждении:", err);
       // alert("Ошибка подтверждения почты: " + err.message);
-      navigate("/login");
+      navigate("/mainform");
     });
 }, [token, navigate]);
-
-
   return <div>Подтверждение почты...</div>;
 };
 

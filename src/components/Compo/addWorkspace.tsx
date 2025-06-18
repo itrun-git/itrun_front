@@ -134,19 +134,13 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
           setFormData({ ...formData, workspaceName: e.target.value })
         }/>
       <label htmlFor="workspaceType">Workspace type</label>
-      <select
-        id="workspaceType"
-        value={formData.workspaceType}
+      <select id="workspaceType" value={formData.workspaceType}
         onChange={(e) =>
-          setFormData({
-            ...formData,
-            workspaceType: e.target.value as "Public" | "Private",
-          })
+          setFormData({...formData, workspaceType: e.target.value as "Public" | "Private",})
         }>
         <option value="Public">Public</option>
         <option value="Private">Private</option>
       </select>
-
       <button type="button" className="modal-continue" onClick={handleContinue} disabled={!formData.workspaceName.trim()}>
         Continue
       </button>
@@ -157,7 +151,6 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
     <div>
       <div className="profile-section">
         <div className="profile-upload">
-
           <div className="photo-circle-wrapper-add" onClick={triggerFileInput}>
             {imagePreview ? (
               <img src={imagePreview} alt="Preview" className="photo-circle-preview-add" />
@@ -184,7 +177,6 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
           
         </div>
       </div>
-
       <div>
         <label htmlFor="workspaceDescription">
           Workspace description <span className="optional">Optional</span>
@@ -196,7 +188,6 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
         <p className="description-help">
           Get your members on board with a few words about your Workspace.
         </p>
-
         <button type="button" className="modal-continue" onClick={handleContinue} disabled={creating}>
           {creating ? "Creating workspace..." : "Create Workspace"}
         </button>
@@ -209,21 +200,17 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
       <div className="step-3-image-placeholder">
         <img src={createfinishworkspace} alt="Workspace created" />
       </div>
-
       <h2 className="step-3-title">Workspace created!</h2>
       <p className="step-3-subtitle">Your Workspace is ready</p>
       <p className="step-3-text">Press 'Continue' to start using your Workspace</p>
-
       <button type="button" className="copy-link-btn" onClick={copyInviteLink}>
        Copy link
       </button>
-
       <button type="button" className="modal-continue-finish" onClick={handleContinue}>
         Finish
       </button>
     </div>
   );
-
   const getStepTitle = () => {
     switch (currentStep) {
       case 1:
@@ -234,7 +221,6 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
         return "";
     }
   };
-
   const getStepSubtitle = () => {
     switch (currentStep) {
       case 1:
@@ -266,7 +252,6 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
                 ))}
               </div>
             </div>
-
             <div className="modal-right">
               <img src={createworkspace} alt="Workspace" />
             </div>

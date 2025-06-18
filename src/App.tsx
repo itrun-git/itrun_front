@@ -17,7 +17,9 @@ function App() {
         <Route path="/verify-email" element={<VerifyEmailRedirect />} />
         <Route path="/mainform" element={<MainForm />} />
         <Route path="/workspace/:workspaceId/:tab" element={<WorkspacePage />} />
-        <Route path="/boardpage" element={<BoardPage/>} />
+        {/* <Route path="/boardpage" element={<BoardPage/>} /> */}
+        <Route path="/workspace/:workspaceId/boardpage/:boardId" element={<BoardPage />} />
+        <Route path="/boardpage/:boardId" element={<BoardPage />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
