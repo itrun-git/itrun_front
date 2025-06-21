@@ -6,7 +6,7 @@ import planet from "../Logo/planet.png";
 import borderstar from "../Logo/borderlight.png";
 import tochka from "../Logo/tochka.png";
 import WorkSpaceLeftBoard from "../Compo/WorkSpaceLeftBoard";
-import { CardAddContent } from "../Compo/CardAddContent"; // Добавьте правильный путь
+import { CardAddContent } from "../Compo/CardAddContent";
 import { draggable } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 import { createColumn, getColumns, updateColumn, deleteColumn as deleteColumnAPI, moveColumn, copyColumn, createCard } from "../Api/api";
@@ -141,24 +141,21 @@ const BoardPage: React.FC<BoardPageProps> = ({
         }
     };
 
-    // Функция для открытия модального окна с карточкой
-    const handleCardClick = (cardId: string, columnId: string) => {
+    const CardClick = (cardId: string, columnId: string) => {
         setSelectedCardId(cardId);
         setSelectedColumnId(columnId);
         setIsCreatingCard(false);
         setIsModalOpen(true);
     };
 
-    // Функция для открытия модального окна создания новой карточки
-    const handleCreateNewCard = (columnId: string) => {
+    const CreateNewCard = (columnId: string) => {
         setSelectedCardId(null);
         setSelectedColumnId(columnId);
         setIsCreatingCard(true);
         setIsModalOpen(true);
     };
 
-    // Функция для закрытия модального окна
-    const handleCloseModal = () => {
+    const CloseModal = () => {
         setIsModalOpen(false);
         setSelectedCardId(null);
         setSelectedColumnId(null);
@@ -166,7 +163,7 @@ const BoardPage: React.FC<BoardPageProps> = ({
     };
 
     // Обработчики для модального окна
-    const handleCardCreated = (newCard: any) => {
+    const CardCreated = (newCard: any) => {
         setColumns(prevColumns => prevColumns.map(column => 
             column.id === selectedColumnId 
                 ? { 
@@ -181,10 +178,10 @@ const BoardPage: React.FC<BoardPageProps> = ({
                 } 
                 : column
         ));
-        handleCloseModal();
+        CloseModal();
     };
 
-    const handleCardUpdated = (updatedCard: any) => {
+    const CardUpdated = (updatedCard: any) => {
         setColumns(prevColumns => prevColumns.map(column => 
             column.id === selectedColumnId 
                 ? {
@@ -204,7 +201,7 @@ const BoardPage: React.FC<BoardPageProps> = ({
         ));
     };
 
-    const handleCardDeleted = (deletedCardId: string) => {
+    const CardDeleted = (deletedCardId: string) => {
         setColumns(prevColumns => prevColumns.map(column => 
             column.id === selectedColumnId 
                 ? {
@@ -213,7 +210,7 @@ const BoardPage: React.FC<BoardPageProps> = ({
                 }
                 : column
         ));
-        handleCloseModal();
+        CloseModal();
     };
 
     const moveCard = (cardId: string, sourceColumn: string, targetColumn: string) => {
@@ -239,13 +236,11 @@ const BoardPage: React.FC<BoardPageProps> = ({
             return newColumns;
         });
 
-        // TODO: Здесь должен быть API вызов для перемещения карточки
         console.log('Moving card:', { cardId, sourceColumn, targetColumn });
     };
 
     const addCard = async (columnId: string) => {
-        // Вместо создания карточки напрямую, открываем модальное окно
-        handleCreateNewCard(columnId);
+        CreateNewCard(columnId);
     };
 
     const addColumn = async () => {
@@ -431,20 +426,9 @@ const BoardPage: React.FC<BoardPageProps> = ({
                         
                         <div className="board-content">
                             {columns.map((column, index) => (
-                                <DroppableColumn 
-                                    key={column.id} 
-                                    column={column} 
-                                    moveCard={moveCard} 
-                                    addCard={addCard} 
-                                    deleteColumn={deleteColumn} 
-                                    renameColumn={renameColumn} 
-                                    copyColumn={CopyColumn} 
-                                    moveColumn={moveColumnLocally}
-                                    updateColumnPositions={updateColumnPositions}
-                                    columnIndex={index}
-                                    totalColumns={columns.length}
-                                    onCardClick={handleCardClick}
-                                />
+                                <DroppableColumn key={column.id} column={column} moveCard={moveCard} addCard={addCard} deleteColumn={deleteColumn} renameColumn={renameColumn} 
+                                    copyColumn={CopyColumn} moveColumn={moveColumnLocally} updateColumnPositions={updateColumnPositions} columnIndex={index} totalColumns={columns.length}
+                                    onCardClick={CardClick}/>
                             ))}
                             <button className="create-column-btn" onClick={addColumn}>
                                 + Add new column
@@ -456,16 +440,8 @@ const BoardPage: React.FC<BoardPageProps> = ({
 
             {/* Модальное окно карточки */}
             {isModalOpen && workspaceId && boardId && selectedColumnId && (
-                <CardAddContent
-                    workspaceId={workspaceId}
-                    boardId={boardId}
-                    columnId={selectedColumnId}
-                    cardId={selectedCardId || undefined}
-                    onClose={handleCloseModal}
-                    onCardCreated={handleCardCreated}
-                    onCardUpdated={handleCardUpdated}
-                    onCardDeleted={handleCardDeleted}
-                />
+                <CardAddContent workspaceId={workspaceId} boardId={boardId} columnId={selectedColumnId} cardId={selectedCardId || undefined} onClose={CloseModal} onCardCreated={CardCreated}
+                    onCardUpdated={CardUpdated} onCardDeleted={CardDeleted}/>
             )}
         </>
     );
@@ -543,7 +519,7 @@ const DroppableColumn = ({
         return () => {cleanCardDrop(); cleanColumnDrop(); cleanDrag();};
     }, [column.id, columnIndex, moveCard, moveColumn, updateColumnPositions]);
 
-    const handleRename = () => {
+    const Rename = () => {
         if (newTitle.trim() && newTitle !== column.title) {
             renameColumn(column.id, newTitle.trim());
         }
@@ -551,33 +527,29 @@ const DroppableColumn = ({
         setIsMenuOpen(false);
     };
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
+    const KeyPress = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
-            handleRename();
+            Rename();
         } else if (e.key === 'Escape') {
             setNewTitle(column.title);
             setIsRenaming(false);
         }
     };
 
-    const handleDelete = () => {
+    const Delete = () => {
         if (window.confirm(`Are you sure you want to delete "${column.title}" column?`)) {
             deleteColumn(column.id);
         }
         setIsMenuOpen(false);
     };
 
-    const handleCopy = () => {
-        copyColumn(column.id);
-        setIsMenuOpen(false);
-    };
-
+    const Copy = () => { copyColumn(column.id); setIsMenuOpen(false);};
     return (
         <div  ref={ref} className={`board-column ${isDragging ? 'dragging' : ''}`}>
             <div className="board-object">
                 {isRenaming ? (
                     <div className="column-rename-container">
-                        <input  type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} onBlur={handleRename} onKeyDown={handleKeyPress} className="column-rename-input" autoFocus/>
+                        <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} onBlur={Rename} onKeyDown={KeyPress} className="column-rename-input" autoFocus/>
                     </div>
                 ) : (
                     <h3>{column.title}</h3>
@@ -591,10 +563,10 @@ const DroppableColumn = ({
                             <button className="column-menu-item" onClick={() => { setIsRenaming(true); setIsMenuOpen(false); }}>
                                 Rename
                             </button>
-                            <button className="column-menu-item" onClick={handleCopy}>
+                            <button className="column-menu-item" onClick={Copy}>
                                 Copy
                             </button>
-                            <button className="column-menu-item column-menu-delete" onClick={handleDelete}>
+                            <button className="column-menu-item column-menu-delete" onClick={Delete}>
                                 Delete
                             </button>
                         </div>
@@ -629,13 +601,13 @@ const DraggableCard = ({ card, columnId, onCardClick }: DraggableCardProps) => {
         return () => cleanup();
     }, [card.id, columnId]);
 
-    const handleClick = () => {
+    const Click = () => {
         console.log(`Clicked on card: ${card.id} - ${card.content}`);
         onCardClick(card.id, columnId);
     };
 
     return (
-        <button  ref={ref} className="board-card" type="button" onClick={handleClick}>
+        <button  ref={ref} className="board-card" type="button" onClick={Click}>
             <div className="card-content">
                 {card.title && <div className="card-title">{card.title}</div>}
                 <div className="card-description">{card.content}</div>

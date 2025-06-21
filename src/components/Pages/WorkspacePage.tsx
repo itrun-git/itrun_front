@@ -13,7 +13,7 @@ import blackmember from "../Logo/blackmember.png";
 import zamok from "../Logo/zamok.png"
 import AddBoardModal from '../Compo/addBoard';
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { getUserWorkspace, deleteWorkspace, getWorkspaceBoards, getFavoriteBoards, addBoardToFavorites, removeBoardFromFavorites, getBoardByIdDelete, generateInviteLink, Board, Guest, getWorkspaceGuests, removeGuestFromWorkspace } from "../Api/api";
+import { getUserWorkspace, deleteWorkspace, getWorkspaceBoards, getFavoriteBoards, addBoardToFavorites, removeBoardFromFavorites, getBoardByIdDelete, generateInviteLink, Board, Guest, getWorkspaceGuests, removeGuestFromWorkspace, findUserByEmail, SearchUserResult } from "../Api/api";
 
 type Template = {
   className: string;
@@ -45,6 +45,12 @@ const WorkspacePage = () => {
   const [activeTab, setActiveTab] = useState(tab || "boards");
   const [workspaceName, setWorkspaceName] = useState("Loading...");
   const [workspaceImageUrl, setWorkspaceImageUrl] = useState<string | null>(null);
+
+  const [searchEmail, setSearchEmail] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchUserResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+
 
   const loadGuests = async () => {
     if (!workspaceId) return;
@@ -103,6 +109,41 @@ const WorkspacePage = () => {
       console.error('Error loading workspace boards', err);
       WorkspaceBoards([]);
     }
+  };
+
+  const searchUserByEmail = async (email: string) => {
+    if (!email.trim()) {
+      setSearchResults([]);
+      setShowSearchResults(false);
+      return;
+    }
+    setIsSearching(true);
+    try {
+      const user = await findUserByEmail(email);
+      setSearchResults([{
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName || 'Unknown User',
+        avatarUrl: user.avatarUrl || null
+      }]);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error('Error searching user:', error);
+      setSearchResults([]);
+      setShowSearchResults(true);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const SearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const email = e.target.value;
+    setSearchEmail(email);
+    setTimeout(() => {
+      if (email === searchEmail) {
+        searchUserByEmail(email);
+      }
+    }, 500);
   };
 
   const toggleWorkspaceFavorite = async (index: number) => {
@@ -395,12 +436,41 @@ const WorkspacePage = () => {
               <h2>Workspace members</h2>
               <h3 className="und-workspace">workspace</h3>
               <div className="und-input-workspace">
-                <input placeholder="Filter by name"/>
-                <h3 className="Disablelink">Disable invite link</h3>
-                <button className="invited-link-btn-workspace-members" onClick={InviteMembers} disabled={isGeneratingInvite}>
-                  {isGeneratingInvite ? "Generating..." : "invite with link"}
-                </button>
-              </div>
+                <div className="search-container">
+                  <input placeholder="Search by email" value={searchEmail} onChange={SearchInputChange}/>
+                  {isSearching && <div className="search-loading">Searching...</div>}
+                  {showSearchResults && (
+                  <div className="search-results">
+                    {searchResults.length > 0 ? (
+                    searchResults.map(user => (
+                    <div key={user.id} className="search-result-item">
+                      <div className="user-avatar">
+                        {user.avatarUrl ? (
+                        <img src={user.avatarUrl} alt={user.fullName} />
+                        ) : (
+                        <div className="avatar-initials">
+                          {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                        </div>
+                        )}
+                      </div>
+                      <div className="user-info">
+                        <div className="user-name">{user.fullName}</div>
+                        <div className="user-email">{user.email}</div>
+                      </div>
+                      <button className="invite-user-btn">Invite</button>
+                    </div>
+                    ))
+                    ) : (
+                    <div className="no-results">No users found</div>
+                    )}
+                  </div>
+                  )}
+                  </div>
+                  <h3 className="Disablelink">Disable invite link</h3>
+                  <button className="invited-link-btn-workspace-members" onClick={InviteMembers} disabled={isGeneratingInvite}>
+                    {isGeneratingInvite ? "Generating..." : "invite with link"}
+                  </button>
+                </div>
             </>
           )}
           {activeMemberTab === "guest" && (
@@ -450,13 +520,46 @@ const WorkspacePage = () => {
               <h2>Join Requests</h2>
               <p>These people have requested to join this Workspace. Adding new Workspace members will automatically update your bill. Workspace guests already count toward the free Workspace collaborator limit</p>
               <div className="und-input-workspace">
-                <input placeholder="Filter by name" />
-                <h3 className="Disablelink">Disable invite link</h3>
-                <button className="invited-link-btn-workspace-members" onClick={InviteMembers} disabled={isGeneratingInvite}>
-                  {isGeneratingInvite ? "Generating..." : "invite with link"}
-                </button>
-              </div>
-              <div className="request-header-controls">
+                <div className="search-container">
+                  <input placeholder="Search by email" value={searchEmail} onChange={SearchInputChange}/>
+                  {isSearching && <div className="search-loading">Searching...</div>}
+                  {showSearchResults && (
+                  <div className="search-results">
+                    {searchResults.length > 0 ? (
+                    searchResults.map(user => (
+                    <div key={user.id} className="search-result-item">
+                      <div className="user-avatar">
+                        {user.avatarUrl ? (
+                        <img src={user.avatarUrl} alt={user.fullName} />
+                        ) : (
+                        <div className="avatar-initials">
+                          {user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                        </div>
+                        )}
+                      </div>
+                      <div className="user-info">
+                        <div className="user-name">{user.fullName}</div>
+                        <div className="user-email">{user.email}</div>
+                      </div>
+                      <button className="invite-user-btn">Invite</button>
+                    </div>
+                    ))
+                    ) : (
+                    <div className="no-results">No users found</div>
+                    )}
+                  </div>
+                  )}
+                  </div>
+                  <h3 className="Disablelink">Disable invite link</h3>
+                  <button className="invited-link-btn-workspace-members" onClick={InviteMembers} disabled={isGeneratingInvite}>
+                    {isGeneratingInvite ? "Generating..." : "invite with link"}
+                  </button>
+                  <h3 className="Disablelink">Disable invite link</h3>
+                  <button className="invited-link-btn-workspace-members" onClick={InviteMembers} disabled={isGeneratingInvite}>
+                    {isGeneratingInvite ? "Generating..." : "invite with link"}
+                  </button>
+                </div>
+                <div className="request-header-controls">
                   <label className="select-all-label">
                   <input type="radio" name="selectALL"/>Select All
                 </label>

@@ -1,5 +1,5 @@
-const API_URL = 'http://147.135.210.93:3002/api';
-// const API_URL = 'http://localhost:3002/api';
+// const API_URL = 'http://147.135.210.93:3002/api';
+const API_URL = 'http://localhost:3002/api';
 const token = localStorage.getItem("authToken");
 
 export enum UserPurpose {
@@ -141,6 +141,14 @@ export interface Comment {
   };
 }
 
+
+export interface SearchUserResult {
+  id: string;
+  email: string;
+  fullName: string;
+  avatarUrl: string | null;
+}
+
 export async function checkEmail(email: string): Promise<{ available: boolean }> {
     const response = await fetch(`${API_URL}/auth/check-email`, {
     method: 'POST',
@@ -205,6 +213,28 @@ export async function resendVerificationEmail(email: string): Promise<void> {
     body: JSON.stringify({ email }),
   });
   if (!response.ok) throw new Error('Failed to resend verification email');
+}
+
+export async function findUserByEmail(email: string): Promise<User> {
+  if (!token) {
+    throw new Error("No auth token found");
+  }
+  const response = await fetch(`${API_URL}/user/${encodeURIComponent(email)}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'User not found');
+  }
+  const user = await response.json();
+  return {
+    ...user,
+    avatarUrl: user.avatarUrl ? `http://147.135.210.93:3002${user.avatarUrl}` : null
+  };
 }
 
 export async function getAllUsers(): Promise<User[]> {
