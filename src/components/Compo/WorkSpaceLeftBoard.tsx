@@ -57,9 +57,7 @@ const WorkSpaceLeftBoard: React.FC<WorkSpaceLeftBoardProps> = ({ activeTab, setA
       const worksapceBoards = await getWorkspaceBoards(workspaceId);
       const favorites = await getFavoriteBoards();
       const favoriteIds = favorites.map(fav => fav.id);
-      const boardsWithFavorites = worksapceBoards.map(board => ({
-        ...board, isStarred: favoriteIds.includes(board.id)
-      }));
+      const boardsWithFavorites = worksapceBoards.map(board => ({...board, isStarred: favoriteIds.includes(board.id)}));
       setBoards(boardsWithFavorites);
       setFavoriteBoards(favoriteIds);
     }catch (error){
@@ -86,7 +84,11 @@ const WorkSpaceLeftBoard: React.FC<WorkSpaceLeftBoardProps> = ({ activeTab, setA
     }
   };
 
-  const handleImageError = () => {
+  const RefreshPage = () => {
+    window.location.reload();
+  };
+
+  const ImageError = () => {
     setImageError(true);
   };
 
@@ -118,7 +120,7 @@ const WorkSpaceLeftBoard: React.FC<WorkSpaceLeftBoardProps> = ({ activeTab, setA
       <div className="workspace-header">
         <div className="avatar">
           {workspaceData?.imageUrl ? (
-            <img src={workspaceData.imageUrl} alt="workspace Avatar" className="workspace-avatar-image-left-bar" onError={handleImageError}/>) : null}
+            <img src={workspaceData.imageUrl} alt="workspace Avatar" className="workspace-avatar-image-left-bar" onError={ImageError}/>) : null}
             <span className={`workspace-initials ${workspaceData?.imageUrl && !imageError ? 'hidden' : ''}`}>
             {workspaceData ? getWorkspaceInitials(workspaceData.name) : 'WS'}
           </span>
@@ -142,10 +144,11 @@ const WorkSpaceLeftBoard: React.FC<WorkSpaceLeftBoardProps> = ({ activeTab, setA
           Settings
         </div>
         <div className="boards-section">
-            <div className="boards-header">
+            <div className="boards-header-leftbar-workspace">
               <p>YOUR BOARDS</p>
-              <div className="plus-icon"/>
+              <button className="btn-update-workespace" onClick={RefreshPage}>↻</button>
             </div>
+            <div className="plus-icon"/>
           {boards.length > 0 ? (
             boards.map((board) => (
               <div key={board.id} className="board-item-btn-left-bar" onClick={() => navigateToBoard(board.id)} >

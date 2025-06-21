@@ -14,7 +14,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ workspaceId, onClose, onB
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const Submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
@@ -40,7 +40,7 @@ const AddBoardModal: React.FC<AddBoardModalProps> = ({ workspaceId, onClose, onB
           </button>
         </div>
         
-        <form className="modal-form" onSubmit={handleSubmit}>
+        <form className="modal-form" onSubmit={Submit}>
           <div className="form-group">
             <label className="form-label">Название доски</label>
             <input

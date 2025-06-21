@@ -13,7 +13,7 @@ import blackmember from "../Logo/blackmember.png";
 import zamok from "../Logo/zamok.png"
 import AddBoardModal from '../Compo/addBoard';
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import { getUserWorkspace, deleteWorkspace, getWorkspaceBoards, getFavoriteBoards, addBoardToFavorites, removeBoardFromFavorites, getBoardByIdDelete, generateInviteLink, Board } from "../Api/api";
+import { getUserWorkspace, deleteWorkspace, getWorkspaceBoards, getFavoriteBoards, addBoardToFavorites, removeBoardFromFavorites, getBoardByIdDelete, generateInviteLink, Board, Guest, getWorkspaceGuests, removeGuestFromWorkspace } from "../Api/api";
 
 type Template = {
   className: string;
@@ -32,6 +32,9 @@ const WorkspacePage = () => {
   const [boardToDelete, setBoardToDelete] = useState<string | null>(null);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [isGeneratingInvite, setIsGeneratingInvite] = useState(false);
+
+  const [guest, setGuests] = useState<Guest[]>([]);
+  const [isLoadingGuests, setIsLoadingGuests] = useState(false);
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,6 +45,37 @@ const WorkspacePage = () => {
   const [activeTab, setActiveTab] = useState(tab || "boards");
   const [workspaceName, setWorkspaceName] = useState("Loading...");
   const [workspaceImageUrl, setWorkspaceImageUrl] = useState<string | null>(null);
+
+  const loadGuests = async () => {
+    if (!workspaceId) return;
+    
+    setIsLoadingGuests(true);
+    try {
+      const guestsData = await getWorkspaceGuests(workspaceId);
+      setGuests(guestsData);
+    } catch (error) {
+      console.error('Error loading guests:', error);
+      setGuests([]);
+    } finally {
+      setIsLoadingGuests(false);
+    }
+  };
+
+  const RemoveGuest = async (guestId: string, guestName: string) => {
+    if (!workspaceId) return;
+    
+    const confirmRemove = window.confirm(`Are you sure you want to remove ${guestName} from this workspace?`);
+    if (!confirmRemove) return;
+    
+    try {
+      await removeGuestFromWorkspace(workspaceId, guestId);
+      setGuests(prev => prev.filter(guest => guest.id !== guestId));
+      alert(`${guestName} has been removed from the workspace`);
+    } catch (error: any) {
+      console.error('Error removing guest:', error);
+      alert(error.message || 'Failed to remove guest');
+    }
+  };
 
     const staticSuggestedBoards: Board[] = [
     { id: 'template-1', className: 'green', label: 'Project Management', isStarred: false, name: ''},
@@ -141,30 +175,36 @@ const WorkspacePage = () => {
       .join('');
   };
 
-  const handleBoardCreated = () => {
+  const BoardCreated = () => {
     if (workspaceId) {
       loadWorkspaceBoard(workspaceId);
     }
   };
 
   useEffect(() => {
-  async function fetchWorkspace() {
-    if (!workspaceId) return;
-    try {
-      const workspaces = await getUserWorkspace();
-      const currentWorkspace = workspaces.find(ws => ws.id === workspaceId);
-      if (currentWorkspace) {
-        setWorkspaceName(currentWorkspace.name ?? "Unnamed Workspace");
-        setWorkspaceImageUrl(currentWorkspace.imageUrl ?? null);
-        loadWorkspaceBoard(workspaceId);
+    async function fetchWorkspace() {
+      if (!workspaceId) return;
+      try {
+        const workspaces = await getUserWorkspace();
+        const currentWorkspace = workspaces.find(ws => ws.id === workspaceId);
+        if (currentWorkspace) {
+          setWorkspaceName(currentWorkspace.name ?? "Unnamed Workspace");
+          setWorkspaceImageUrl(currentWorkspace.imageUrl ?? null);
+          loadWorkspaceBoard(workspaceId);
+        }
+      } catch (error) {
+        console.error("Error fetching workspace:", error);
+        setWorkspaceName("Workspace not found");
       }
-    } catch (error) {
-      console.error("Error fetching workspace:", error);
-      setWorkspaceName("Workspace not found");
     }
-  }
-  fetchWorkspace();
-}, [workspaceId]);
+    fetchWorkspace();
+  }, [workspaceId]);
+
+  useEffect(() => {
+    if (activeMemberTab === "guest" && workspaceId) {
+      loadGuests();
+    }
+  }, [activeMemberTab, workspaceId]);
 
   const DeleteWorkspace  = async () => {
     if(!workspaceId) 
@@ -338,7 +378,7 @@ const WorkspacePage = () => {
       </div>
     </>
   );
-  const renderMembersContent = () => (
+   const renderMembersContent = () => (
     <div className="members-view">
       <h2>Collaborators</h2>
       <div className="collab-layout">
@@ -366,7 +406,43 @@ const WorkspacePage = () => {
           {activeMemberTab === "guest" && (
             <>
               <h2>Guest users</h2>
-              <p>Guests can only view and edit the boards to which they’ve been added.</p>
+              <p>Guests can only view and edit the boards to which they've been added.</p>
+              
+              {isLoadingGuests ? (
+                <div className="loading-guests">Loading guests...</div>
+              ) : guest.length === 0 ? (
+                <div className="no-guests">
+                  <p>No guests in this workspace yet.</p>
+                </div>
+              ) : (
+                <div className="guest-list">
+                  {guest.map((guest) => (
+                    <div key={guest.id} className="guest-item">
+                      <div className="guest-info">
+                        <div className="guest-avatar">
+                          {guest.avatarUrl ? (
+                            <img src={guest.avatarUrl} alt={guest.name} className="avatar-image" />
+                          ) : (
+                            <div className="avatar-initials-guest">
+                              {guest.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="guest-details">
+                          <div className="guest-name">{guest.name}</div>
+                          <div className="guest-email">{guest.email}</div>
+                          <div className="guest-joined">
+                            Joined: {new Date(guest.joinedAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      <button className="remove-guest-btn" onClick={() => RemoveGuest(guest.id, guest.name)} title="Remove guest">
+                        <img src={delet} alt="Remove" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </>
           )}
           {activeMemberTab === "requests" && (
@@ -382,7 +458,7 @@ const WorkspacePage = () => {
               </div>
               <div className="request-header-controls">
                   <label className="select-all-label">
-                  <input type="radio" name="selectALL"/>Selec All
+                  <input type="radio" name="selectALL"/>Select All
                 </label>
                 <div className="request-btn">
                  <button className="accept-btn">Accept</button>
@@ -395,7 +471,6 @@ const WorkspacePage = () => {
       </div>
     </div>
   );
-
   const renderSettingsContent = () => (
   <div className="settings-view">
     <hr className="settings-divider" />
@@ -504,7 +579,7 @@ const WorkspacePage = () => {
               </div>
             )}
             {showAddBoardModal && workspaceId && (
-              <AddBoardModal workspaceId={workspaceId} onClose={() => ShowAddBoardModal(false)}onBoardCreated={handleBoardCreated} />
+              <AddBoardModal workspaceId={workspaceId} onClose={() => ShowAddBoardModal(false)}onBoardCreated={BoardCreated} />
             )}
           </div>
         </div>

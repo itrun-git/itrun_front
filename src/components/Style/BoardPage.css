@@ -30,6 +30,14 @@
   padding: 16px;
 }
 
+.board-left-otstup {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+}
+
 .board-content {
   flex: 1;
   display: flex;
@@ -41,7 +49,6 @@
   /* scrollbar-width: thin;
   scrollbar-color: #14b8a6 transparent; */
   padding: 1px 16px 16px 16px;
-  margin-left: 300px;
   gap: 24px;
   align-items: flex-start;
   box-sizing: border-box;
@@ -72,7 +79,6 @@
   display: flex;
   flex-direction: row;
   padding: 16px;
-  margin-left: 300px;
   margin-top: 10px;
   gap: 16px;
   align-items: center;

@@ -31,10 +31,8 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
       try {
         setLoading(true);
         const workspaces = await getUserWorkspace();
-        
         setUserWorkspaces(workspaces);
         setGuestWorkspaces([]);
-        
         setError(null);
       } catch (err) {
         console.error('Error loading workspaces:', err);
@@ -49,7 +47,6 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
     loadWorkspaces();
   }, []);
 
-  // Функция для получения аватара из имени
   const getWorkspaceAvatar = (name: string): string => {
     const words = name.split(' ');
     if (words.length >= 2) {
@@ -58,7 +55,6 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
     return name.substring(0, 2).toUpperCase();
   };
 
-  // Обработчик закрытия модального окна с обновлением списка
   const ModalClose = async () => {
     setShowModal(false);
     // Перезагружаем список workspace после создания нового
@@ -70,12 +66,18 @@ const UserWorkSpace: React.FC<Props> = ({ onWorkspaceClick  }) => {
     }
   };
 
+  const RefreshPage = () => {
+    window.location.reload();
+  };
   return (
     <div className="workspace-container">
       <div className="workspace-section">
         <div className='workspace-section-title'>
           <h3 className="section-title">YOUR WORKSPACES</h3>
-          <button className="plus-icon-for-modalwin" onClick={() => setShowModal(true)}>+</button>
+          <div className="workspace-section-buttons">
+            <button className="plus-icon-for-modalwin" onClick={() => setShowModal(true)}>+</button>
+            <button className="btn-update-workespace-maim-page" onClick={RefreshPage}>↻</button>
+          </div>
         </div>
         <div className="workspace-list">
           {userWorkspaces.length === 0 ? (

@@ -52,7 +52,7 @@ const MultiStepModal: React.FC<ModalProps> = ({ onClose }) => {
     localStorage.setItem('workspaceFormData', JSON.stringify(dataToSave));
   }, [formData.workspaceName, formData.workspaceType, formData.workspaceDescription]);
 
-  const handleContinue = async () => {
+  const Continue = async () => {
     if (currentStep === 1) {
       setCurrentStep(2);
     } else if (currentStep === 2) {
@@ -146,7 +146,7 @@ const copyInviteLink = async () => {
         <option value="Public">Public</option>
         <option value="Private">Private</option>
       </select>
-      <button type="button" className="modal-continue" onClick={handleContinue} disabled={!formData.workspaceName.trim()}>
+      <button type="button" className="modal-continue" onClick={Continue} disabled={!formData.workspaceName.trim()}>
         Continue
       </button>
     </div>
@@ -193,7 +193,7 @@ const copyInviteLink = async () => {
         <p className="description-help">
           Get your members on board with a few words about your Workspace.
         </p>
-        <button type="button" className="modal-continue" onClick={handleContinue} disabled={creating}>
+        <button type="button" className="modal-continue" onClick={Continue} disabled={creating}>
           {creating ? "Creating workspace..." : "Create Workspace"}
         </button>
       </div>
@@ -211,7 +211,7 @@ const copyInviteLink = async () => {
       <button type="button" className="copy-link-btn" onClick={copyInviteLink}>
        Copy link
       </button>
-      <button type="button" className="modal-continue-finish" onClick={handleContinue}>
+      <button type="button" className="modal-continue-finish" onClick={Continue}>
         Finish
       </button>
     </div>

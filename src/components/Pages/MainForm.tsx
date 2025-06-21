@@ -128,7 +128,7 @@ const MainForm = () => {
       loadWorkspaceBoards(selectedWorkspaceId);
     }
   }, [selectedWorkspaceId]);
-  const handleAddToWorkspace = (board: Board) => {
+  const AddToWorkspace = (board: Board) => {
     setSelectedBoardToAdd(board);
     setShowWorkspaceModal(true);
   };
@@ -228,7 +228,7 @@ const MainForm = () => {
       .join('');
   };
 
-  const handleBoardCreated = () => {
+  const BoardCreated = () => {
     loadData();
     if (selectedWorkspaceId) {
       loadWorkspaceBoards(selectedWorkspaceId);
@@ -287,7 +287,7 @@ const MainForm = () => {
                     <div className="add-temp-card">
                       {sectionKey === 'suggested' && (
                         <>
-                          <button className="add-btn-card-tmp" onClick={() => handleAddToWorkspace(board)} title="Add to workspace">+ </button>
+                          <button className="add-btn-card-tmp" onClick={() => AddToWorkspace(board)} title="Add to workspace">+ </button>
                           <img src={board.isStarred ? starlight : star} alt="star" className='star-icon-content' onClick={() => StarredFromSuggested(currentIndex + index)}/>
                         </>
                       )}
@@ -520,7 +520,7 @@ const MainForm = () => {
         )}
         {/* Модальное окно создания доски */}
         {showAddBoardModal && selectedWorkspaceId && (
-          <AddBoardModal workspaceId={selectedWorkspaceId} onClose={() => setShowAddBoardModal(false)} onBoardCreated={handleBoardCreated}/>
+          <AddBoardModal workspaceId={selectedWorkspaceId} onClose={() => setShowAddBoardModal(false)} onBoardCreated={BoardCreated}/>
         )}
       </div>
     </div>

@@ -61,19 +61,6 @@
   margin-bottom: 30px;
 }
 
-.plus-icon-for-modalwin{
-  border: none;
-  background-color: transparent;
-  color: #888;
-  cursor: pointer;
-  padding: 4px; 
-  font-size: 25px;
-}
-
-.plus-icon-for-modalwin:hover{
-  border-color: transparent;
-}
-
 .star-icon {
   font-size: 16px;
   color: #ffd700;
@@ -128,4 +115,28 @@
 
 .star-icon-left-bar{
   margin-top: 5px;
+}
+
+.btn-update-workespace {
+  background: none; 
+  border: 1px solid #14b8a6;
+  color: #14b8a6;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+}
+
+.boards-header-leftbar-workspace{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
