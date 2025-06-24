@@ -17,12 +17,10 @@ useEffect(() => {
   confirmEmail(token)
     .then(() => {
       console.log("Email confirmed");
-      // alert("Email успешно подтверждён! Теперь можно войти.");
       navigate("/mainform");
     })
     .catch((err) => {
       console.log("Ошибка при подтверждении:", err);
-      // alert("Ошибка подтверждения почты: " + err.message);
       navigate("/mainform");
     });
 }, [token, navigate]);

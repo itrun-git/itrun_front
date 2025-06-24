@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "../Style/RegistrationForm.css";
-import LogoIcon from "../Logo/LogoIcon.png";
+import LogoIcon from "../Logo/logoItRun.png";
 import CameraIcon from "../Logo/camera.png";
 import { emailSchema, passwordSchema } from "../Schema/ValidationService";
 import { registerUser, CreateUserDto, UserPurpose, checkEmail, sendVerificationEmail, changeUserEmail, setUserPurpose, uploadAvatar } from "../Api/api";
@@ -262,8 +262,8 @@ const RegistrationForm: React.FC = () => {
     <div className="registration-container">
       <div className="form-box">
         <div className="logo-section">
-          <img src={LogoIcon} alt="ItRun Logo" className="logo" />
-          <h2>ItRun</h2>
+          <img src={LogoIcon} alt="ItRun Logo" className="logo-register-form" />
+          {/* <h2>ItRun</h2> */}
         </div>
 
         {error && <div className="error-banner">{error}</div>}
@@ -387,13 +387,7 @@ const RegistrationForm: React.FC = () => {
                   <p className="email-info">
                     {timer > 0 ? `You can resend in ${formatTime(timer)}` : "Click to send verification email"}
                   </p>
-                  <button type="button" className="change-email-button"
-                    onClick={() => {
-                      setShowChangeEmail(true);
-                      setNewEmail(getValues("email"));
-                    }}>
-                    Change email
-                  </button>
+                  <button type="button" className="change-email-button" onClick={() => {setShowChangeEmail(true); setNewEmail(getValues("email")); }}>Change email</button>
                   <p className="login-link">
                     Already have an account? <button type="button" onClick={() => navigate("/login")} className="link-button">Sign In</button>
                   </p>

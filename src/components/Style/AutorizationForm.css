@@ -4,7 +4,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('../Logo/background.png'); 
+  background-image: url(../Logo/background.png); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -160,4 +160,12 @@
 
 .login-link a:hover {
   text-decoration: underline;
+}
+
+.google-autorization{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
 }

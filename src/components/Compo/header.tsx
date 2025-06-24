@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Style/HeaderMenu.css';
-import LogoIcon from "../Logo/LogoIcon.png";
+import LogoIcon from "../Logo/logoItRun.png";
 import { getUserFullName, getUserEmail, getUserAvatar, logoutUser, getUserWorkspace, getFavoriteBoards, Workspace, Board } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
 import vopsor from '../Logo/vopsor.png';
@@ -166,16 +166,16 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-left">
-        <div className="logo">
+        <div className="logo-header">
           <button className="header-menu-btn" onClick={TabClick}>
-          <img src={LogoIcon} alt="ItRun Logo" className="logo"/>
+          <img src={LogoIcon} alt="ItRun Logo" className="logo-header"/>
           </button>
           </div>
-          <div className="logo-text">
+          {/* <div className="logo-text">
             <button className="header-menu-btn" onClick={TabClick}>
             ItRun
             </button>
-          </div>
+          </div> */}
         <nav className="menu">
           <div className='menu-item-drop-down'ref={workspaceMenuRef}>
             <button className="menu-item-btn-drop-down" onClick={WorkspacesClick}>Workspaces ▾</button>

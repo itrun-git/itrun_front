@@ -5,6 +5,7 @@ import UserWorkSpace from '../Compo/UserWorkSpace';
 import AddBoardModal from '../Compo/addBoard';
 import '../Style/MainFrom.css';
 import LogoIcon from "../Logo/LogoIcon.png";
+import LogoIconl from "../Logo/logoItRun.png";
 import home from "../Logo/home.png";
 import table from "../Logo/table.png";
 import leftarrow from "../Logo/leftarrow.png";
@@ -85,6 +86,7 @@ const MainForm = () => {
       console.error('Error loading data', err);
     }
   };
+  
   const loadWorkspaceBoards = async (workspaceId: string) => {
     try {
       const boards = await getWorkspaceBoards(workspaceId);
@@ -373,7 +375,7 @@ const MainForm = () => {
             <div className="suggested-templates">
               <div className="header-row">
                 <div className="header-left">
-                  <img src={LogoIcon} alt="ItRun Logo" className="logo"/>
+                  <img src={LogoIconl} alt="ItRun Logo" className="logo-workspace-page"/>
                   <h2>Suggested templates</h2>
                 </div>
                 <button className="close-button" onClick={CloseBoard}>X</button>

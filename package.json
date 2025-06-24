@@ -19,6 +19,7 @@
     "@tabler/icons-react": "^3.33.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "lucide-react": "^0.522.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.4",

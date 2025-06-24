@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../Compo/header";
 import "../Style/WorkSpace.css";
 import WorkSpaceLeftBoard from "../Compo/WorkSpaceLeftBoard";
-import LogoIcon from "../Logo/LogoIcon.png";
+import LogoIcon from "../Logo/logoItRun.png";
 import leftarrow from "../Logo/leftarrow.png";
 import rightarrow from "../Logo/rightarrow.png";
 import pen from "../Logo/pen.png";
@@ -367,7 +367,7 @@ const WorkspacePage = () => {
       <div className="suggested-templates">
         <div className="header-row">
           <div className="header-left">
-            <img src={LogoIcon} alt="ItRun Logo" className="logo" />
+            <img src={LogoIcon} alt="ItRun Logo" className="logo-header-board" />
             <h2>Suggested templates</h2>
           </div>
         </div>

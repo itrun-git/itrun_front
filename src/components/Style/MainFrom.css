@@ -67,12 +67,6 @@
   width: 10%;
 }
 
-.btn-icon-logo {
-  display: flex;
-  width: 10%;
-  height: 16px;
-}
-
 .main-content {
   display: flex;
   justify-content: flex-start;
@@ -483,12 +477,10 @@
   text-align: center;
 }
 
-/* Содержимое модального окна */
 .template-window-content h2 {
   margin-bottom: 16px;
 }
 
-/* Кнопка закрытия модального окна */
 .close-window {
   position: absolute;
   top: 8px;
@@ -538,6 +530,12 @@
   cursor: pointer;
   display: flex;
   justify-self: center;
+}
+
+.btn-icon-logo {
+  display: flex;
+  width: 10%;
+  height: 16px;
 }
 
 .btn-logo-wsp{

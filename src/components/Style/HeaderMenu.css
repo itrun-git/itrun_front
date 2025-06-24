@@ -18,14 +18,9 @@
   gap: 20px;
 }
 
-.logo {
+.logo-header {
   display: flex;
   align-items: center;
-}
-
-.logo img {
-  width: 30px; 
-  height: auto;
 }
 
 .logo-text {
