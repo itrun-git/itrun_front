@@ -418,8 +418,8 @@ const MainForm = () => {
             </div>
             
             <div className="bottom-controls">
-              <button className="control-btn" onClick={CloseBoard}>Closed boards</button>
-              <button className="control-btn" onClick={HiddenBoard}>Hidden boards</button>
+              {/* <button className="control-btn" onClick={CloseBoard}>Closed boards</button> */}
+              {/* <button className="control-btn" onClick={HiddenBoard}>Hidden boards</button> */}
             </div>
           </div>
         )}
