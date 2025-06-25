@@ -226,16 +226,6 @@ const BoardPage: React.FC<BoardPageProps> = ({
         return null;
     };
            
-    const clearLocalState = () => {
-        if (workspaceId && boardId) {
-            const cardStateKey = getCardStateKey(workspaceId, boardId);
-            const columnOrderKey = getColumnOrderKey(workspaceId, boardId);
-            localStorage.removeItem(cardStateKey);
-            localStorage.removeItem(columnOrderKey);
-            console.log('localStorage state cleared');
-            loadColumns();
-        }
-    };
 
     const CardClick = (cardId: string, columnId: string) => {
         setSelectedCardId(cardId);
@@ -591,9 +581,6 @@ const BoardPage: React.FC<BoardPageProps> = ({
                             <div className="board-header-left">
                                 <button className="tochka-btn">
                                     <img className="planet-header-board-lft" src={tochka} alt="dots" />
-                                </button>
-                                <button onClick={clearLocalState} className="clear-state-btn">
-                                    Clear Local State
                                 </button>
                             </div>
                         </div>

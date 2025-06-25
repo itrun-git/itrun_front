@@ -482,7 +482,7 @@ export async function getUserWorkspace(): Promise<Workspace[]> {
   return workspaces.map((w: any) => ({
     ...w,
     imageUrl: w.imageUrl 
-      ? `http://147.135.210.93:3002/uploads/board-backgrounds${w.imageUrl}` 
+      ? `http://147.135.210.93:3002${w.imageUrl}` 
       : null,
   }));
 }
