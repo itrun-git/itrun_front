@@ -17,6 +17,7 @@
   margin-right: 20px;
   align-self: flex-start;
   position: relative;
+  z-index: 1;
 }
 
   .navigation-block {
@@ -36,7 +37,7 @@
   /* padding: 20px; */
   background-color: #F6F6F60D;
   box-shadow: 0 0 24px rgba(20, 184, 166, 0.2);
-  position: absolute;
+  position: relative;
   left: 360px;
   top: 218px;
   width: 296px;
