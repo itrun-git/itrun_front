@@ -1,5 +1,5 @@
-const API_URL = 'http://147.135.210.93:3002/api';
-// const API_URL = 'http://localhost:3002/api';
+// const API_URL = 'http://147.135.210.93:3002/api';
+const API_URL = 'http://localhost:3002/api';
 const TOKEN_KEY = "authToken";
 
 export const setAuthToken = (token: string): void => {

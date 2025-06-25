@@ -131,15 +131,15 @@ const WorkSpaceLeftBoard: React.FC<WorkSpaceLeftBoardProps> = ({ activeTab, setA
       </div>
 
       <div className="nav-section">
-        <div className={`nav-item ${activeTab === "boards" ? "active" : ""}`} onClick={() => setActiveTab("boards")}>
+        <div className={`nav-item ${activeTab === "boards" ? "active" : ""}`} onClick={() => navigate(`/workspace/${workspaceId}/boards`)}>
           <img src={board} alt="Boards"/>
           Boards
         </div>
-        <div className={`nav-item ${activeTab === "members" ? "active" : ""}`} onClick={() => setActiveTab("members")}>
+        <div className={`nav-item ${activeTab === "members" ? "active" : ""}`} onClick={() => navigate(`/workspace/${workspaceId}/members`)}>
           <img src={member} alt="Members"/>
           Members
         </div>
-        <div className={`nav-item ${activeTab === "settings" ? "active" : ""}`} onClick={() => setActiveTab("settings")}>
+        <div className={`nav-item ${activeTab === "settings" ? "active" : ""}`} onClick={() => navigate(`/workspace/${workspaceId}/settings`)}>
           <img src={settings} alt="Settings"/>
           Settings
         </div>

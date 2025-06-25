@@ -91,9 +91,9 @@ const Header = () => {
     if(!token) return;
     try{
       const starredData = await getFavoriteBoards();
-      setStarredBoards(starredBoards);
+      setStarredBoards(starredData);
     }catch (error){
-      console.error("Error upgrate workspace", error);
+      console.error("Error upgrate starred boards", error);
       setStarredBoards([]);
     }
   };
@@ -122,14 +122,14 @@ const Header = () => {
     setIsUserMenuOpen(false);
   };
 
-  const WorkspaceClick = (workspaceId: string) =>{
-    navigate(`/workspace/${workspaceId}`);
+  const WorkspaceClick = (workspaceId: string) => {
+    navigate(`/workspace/${workspaceId}/boards`);
     setIsWorkspacesMenuOpen(false);
   }
 
-  const StarredBoardClick = (boardId: string) =>{
-    navigate(`/workspace/${boardId}`);
-    setIsWorkspacesMenuOpen(false);
+  const StarredBoardClick = (boardId: string) => {
+    navigate(`/board/${boardId}`); 
+    setIsStarredMenuOpen(false); 
   }
 
   const WorkspacesClick = () =>{
@@ -184,7 +184,7 @@ const Header = () => {
                 <div className="dropdown-header">Your Workspaces</div>
                 {workspaces.length > 0 ? (
                   workspaces.map((workspace) => (
-                    <div key={workspace.id} className="dropdown-item" onClick={() => WorkspaceClick(workspace.id)}>
+                    <div key={workspace.id} className="dropdown-item-header-menu-spisok" onClick={() => WorkspaceClick(workspace.id)}>
                       <div className="workspace-item-btn-drop-down">
                         {workspace.imageUrl ? (
                           <img src={workspace.imageUrl} alt={workspace.name} className="workspace-icon"/>

@@ -24,6 +24,7 @@ const MainForm = () => {
   const [suggestedShowAll, setSuggestedShowAll] = useState<boolean>(false);
   const [suggestedIndex, setSuggestedIndex] = useState<number>(0);
   const [userBoards, setUserBoards] = useState<Board[]>([]);
+  const [showSuggestedTemplates, setShowSuggestedTemplates] = useState<boolean>(true);
 
   // Избранные доски
   const [starredShowAll, setStarredShowAll] = useState<boolean>(false);
@@ -46,6 +47,8 @@ const MainForm = () => {
   const [showWorkspaceModal, setShowWorkspaceModal] = useState<boolean>(false);
   const [selectedBoardToAdd, setSelectedBoardToAdd] = useState<Board | null>(null);
   const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceData[]>([]);
+
+
   const navigate = useNavigate();
   const TabClick = (tab: string) => {
     if(selectedWorkspaceId){
@@ -285,7 +288,7 @@ const MainForm = () => {
                     <img src={board.imageUrl} alt={board.label} className="board-image"/>
                   )}
                   <div className='card-content-tmp'>
-                    {board.label || 'Board'}
+                    {board.name || board.label || 'Board'}
                     <div className="add-temp-card">
                       {sectionKey === 'suggested' && (
                         <>
@@ -372,28 +375,29 @@ const MainForm = () => {
         {showCentralBoard && (
           <div className="central-side">
             {/* Suggested Templates */}
-            <div className="suggested-templates">
-              <div className="header-row">
-                <div className="header-left">
-                  <img src={LogoIconl} alt="ItRun Logo" className="logo-workspace-page"/>
-                  <h2>Suggested templates</h2>
+            {showSuggestedTemplates && (
+              <div className="suggested-templates">
+                <div className="header-row">
+                  <div className="header-left">
+                    <img src={LogoIconl} alt="ItRun Logo" className="logo-workspace-page"/>
+                    <h2>Suggested templates</h2>
+                  </div>
+                  <button className="close-button" onClick={() => setShowSuggestedTemplates(false)}>X</button>
                 </div>
-                <button className="close-button" onClick={CloseBoard}>X</button>
+                <p className="subtext">Get going faster with a template from itRun community</p>
+
+                <BoardSection 
+                  title="" 
+                  boards={getSuggestedBoardsWithStarStatus()} 
+                  currentIndex={suggestedIndex} 
+                  showAll={suggestedShowAll}
+                  onShowAll={() => setSuggestedShowAll(!suggestedShowAll)}
+                  onLeft={() => scrollByArrow(-1, suggestedIndex, setSuggestedIndex, staticSuggestedBoards.length)}
+                  onRight={() => scrollByArrow(1, suggestedIndex, setSuggestedIndex, staticSuggestedBoards.length)}
+                  sectionKey="suggested"
+                />
               </div>
-              <p className="subtext">Get going faster with a template from itRun community</p>
-
-              <BoardSection 
-                title="" 
-                boards={getSuggestedBoardsWithStarStatus()} 
-                currentIndex={suggestedIndex} 
-                showAll={suggestedShowAll}
-                onShowAll={() => setSuggestedShowAll(!suggestedShowAll)}
-                onLeft={() => scrollByArrow(-1, suggestedIndex, setSuggestedIndex, staticSuggestedBoards.length)}
-                onRight={() => scrollByArrow(1, suggestedIndex, setSuggestedIndex, staticSuggestedBoards.length)}
-                sectionKey="suggested"
-              />
-            </div>
-
+            )}
             {/* Starred Boards */}
             <div className="starred-boards">
               <BoardSection image={star} title="Starred boards" boards={starredBoards} currentIndex={starredIndex} showAll={starredShowAll}
@@ -472,7 +476,7 @@ const MainForm = () => {
                         <img src={board.isStarred ? starlight : star} alt="Star" />
                       </span>
                     </div>
-                    <span className="board-name">{board.label}</span>
+                    <span className="board-name">{board.name || board.label}</span>
                   </div>
                 ))}
                 <div className="board-item create-new" onClick={() => setShowAddBoardModal(true)}>

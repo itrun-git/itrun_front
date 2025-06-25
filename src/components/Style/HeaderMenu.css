@@ -110,10 +110,10 @@
   color: #5e6c84;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  background-color: #F6F6F60D;
+  /* background-color: #F6F6F60D; */
 }
 
-.dropdown-item {
+.dropdown-item{
   padding: 8px 16px;
   /* border-radius: 0px 0px 16px 16px; */
   cursor: pointer;

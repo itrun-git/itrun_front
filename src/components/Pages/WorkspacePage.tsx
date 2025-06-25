@@ -165,7 +165,6 @@ const WorkspacePage = () => {
           await removeBoardFromFavorites(board.id);
           WorkspaceBoards(prev => prev.map((b, i) => i === index ? { ...b, isStarred: false } : b));
         } else {
-          await addBoardToFavorites(board.id);
           WorkspaceBoards(prev => prev.map((b, i) => i === index ? { ...b, isStarred: true } : b));
         }
       } catch (err) {
