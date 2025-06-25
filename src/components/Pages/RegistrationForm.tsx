@@ -305,7 +305,7 @@ const RegistrationForm: React.FC = () => {
                   {showPassword ? "Hide" : "Show"}
                 </button>
               </div>
-              <div className="password-text-much">Must be at least 8 characters</div>
+               {/* <div className="password-text-much">Must be at least 8 characters</div>*/}
               {errors.password && (
                 <p className="error">{String(errors.password.message)}</p>
               )}
