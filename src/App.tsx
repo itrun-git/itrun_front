@@ -8,6 +8,7 @@ import WorkspacePage from "./components/Pages/WorkspacePage";
 //import NotFoundTitle from "./components/Pages/Compo/ErrorPage";
 import BoardPage from "./components/Pages/BoardPage";
 import SocialLoginCallbackApi from './components/Compo/SocialLoginCallback';
+import NotFound from "./components/Pages/404notfound";
 
 import TestModal from "./components/testpage/testmodal"; //testpage
 
@@ -15,6 +16,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<AutorizationForm />} />
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/verify-email" element={<VerifyEmailRedirect />} />
@@ -25,6 +27,7 @@ function App() {
         <Route path="/auth/social-login" element={<SocialLoginCallbackApi />} />
         {/* testpage */}
         <Route path="/testmodal" element={<TestModal />} />
+        <Route path="*" element={<NotFound />} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
