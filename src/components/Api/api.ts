@@ -482,7 +482,7 @@ export async function getUserWorkspace(): Promise<Workspace[]> {
   return workspaces.map((w: any) => ({
     ...w,
     imageUrl: w.imageUrl 
-      ? `http://147.135.210.93:3002${w.imageUrl}` 
+      ? `http://147.135.210.93:3002/uploads/board-backgrounds${w.imageUrl}` 
       : null,
   }));
 }
@@ -1432,7 +1432,7 @@ export async function getCardAttachments(workspaceId: string, boardId: string, c
   return attachments.map((attachment: any) => ({
     ...attachment,
     // fullUrl: `http://localhost:3002/attachment/${attachment.filename || attachment.path || attachment.name}`,
-    fullUrl: `http://147.135.210.93:3002/attachment/${attachment.filename || attachment.path || attachment.name}`
+    fullUrl: `http://147.135.210.93:3002/uploads/attachments/${attachment.filename || attachment.path || attachment.name}`
   }));
 }
 

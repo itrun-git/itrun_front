@@ -551,22 +551,7 @@ export const CardAddContent: React.FC<CardAddContentProps> = ({
                 </div>
               )}
             </div>
-
-            {/* Attachments */}
-            {/* {Array.isArray(attachments) && attachments.length > 0 && (
-              <div className="card-section">
-                <h3>Attachments ({attachmentsCount})</h3>
-                <div className="attachments-container">
-                  {attachments.map(attachment => (
-                    <div key={attachment.id} className="attachment-item">
-                      <span>{attachment.filename}</span>
-                      <button onClick={() => DeleteAttachment(attachment.id)}>Delete</button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )} */}
-
+            
             {/* Comments */}
             <div className="card-section">
               <h3>Comments</h3>
