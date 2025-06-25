@@ -12,7 +12,8 @@
 }
 
 .modal-content {
-  background: white;
+  background-color: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(10px);
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -32,7 +33,7 @@
   font-size: 20px;
   font-weight: bold;
   margin: 0;
-  color: #333;
+  color: #ffffff;
 }
 
 .modal-close {
@@ -70,12 +71,12 @@
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 6px;
-  color: #555;
+  color: #ffffff;
 }
 
 .form-input {
   padding: 10px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #555555;
   border-radius: 6px;
   font-size: 14px;
   transition: border-color 0.2s;
@@ -89,10 +90,10 @@
 
 .form-file-input {
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid #555555;
   border-radius: 6px;
   font-size: 14px;
-  background: white;
+  background: rgb(85, 85, 85);
   cursor: pointer;
 }
 
